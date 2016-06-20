@@ -2915,6 +2915,7 @@ void processContextElement
     // This is the case of POST /v2/entities/<id>, in order to check that entity previously exist
     if ((entitiesNumber == 0) && (ngsiv2Flavour == NGSIV2_FLAVOUR_ONAPPEND))
     {
+      LM_W(("KZ: The requested entity has not been found"));
       buildGeneralErrorResponse(ceP, NULL, responseP, SccContextElementNotFound, "The requested entity has not been found. Check type and id");
       responseP->oe.fill(SccContextElementNotFound, "The requested entity has not been found. Check type and id", "NotFound");
       return;
@@ -3060,6 +3061,7 @@ void processContextElement
         }
         else
         {
+          LM_W(("KZ: The requested entity has not been found"));
           responseP->oe.fill(SccContextElementNotFound, "The requested entity has not been found. Check type and id", "NotFound");
         }
       }
@@ -3068,6 +3070,7 @@ void processContextElement
     {
       cerP->statusCode.fill(SccContextElementNotFound);
 
+      LM_W(("KZ: The requested entity has not been found"));
       responseP->oe.fill(SccContextElementNotFound, "The requested entity has not been found. Check type and id", "NotFound");
       responseP->contextElementResponseVector.push_back(cerP);
     }

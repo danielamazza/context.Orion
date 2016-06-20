@@ -696,6 +696,7 @@ std::string postUpdateContext
       }
       else
       {
+        LM_W(("KZ: The requested entity has not been found"));
         parseDataP->upcrs.res.oe.fill(SccContextElementNotFound, "The requested entity has not been found. Check type and id", "NotFound");
       }
     }
