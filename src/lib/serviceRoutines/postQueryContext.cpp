@@ -314,6 +314,19 @@ std::string postQueryContext
                                                       countP,
                                                       ciP->apiVersion));
 
+#if 0
+  LM_W(("KZ: mongoQueryContext returned a QueryContextResponse of %d ContextElements", qcrsP->contextElementResponseVector.size()));
+  LM_W(("KZ: mongoQueryContext returned %d as HTTP status code", ciP->httpStatusCode));
+  LM_W(("KZ: mongoQueryContext returned '%s' as 'global' error code", qcrsP->errorCode.reasonPhrase.c_str()));
+
+  for (unsigned int ix = 0; ix < qcrsP->contextElementResponseVector.size(); ++ix)
+  {
+    ContextElementResponse* cerP = qcrsP->contextElementResponseVector[ix];
+    LM_W(("KZ: QueryContextResponse[%d]: %s", cerP->statusCode.reasonPhrase.c_str()));
+  }
+#endif
+
+
   if (qcrsP->errorCode.code == SccBadRequest)
   {
     // Bad Input detected by Mongo Backend - request ends here !

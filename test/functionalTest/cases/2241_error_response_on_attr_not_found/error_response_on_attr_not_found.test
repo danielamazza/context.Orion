@@ -52,6 +52,13 @@ echo
 echo
 
 
+echo "03. GET E1/A2, see error"
+echo "========================"
+orionCurl --url /v2/entities/E1/attrs/A2
+echo
+echo
+
+
 --REGEXPECT--
 01. Create E1/A1
 ================
@@ -66,11 +73,14 @@ Date: REGEX(.*)
 02. GET E1/A2, see error
 ========================
 HTTP/1.1 404 Not Found
-Content-Length: 79
+Content-Length: 103
+Content-Type: application/json
 Fiware-Correlator: REGEX([0-9a-f\-]{36})
 Date: REGEX(.*)
 
 {
+    "description": "The combination of entity-id and attribute-name has not been found",
+    "error": "NotFound"
 }
 
 

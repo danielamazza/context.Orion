@@ -1180,6 +1180,7 @@ bool entitiesQuery
   DBClientBase* connection = getMongoConnection();
   if (!collectionRangedQuery(connection, getEntitiesCollectionName(tenant), query, limit, offset, &cursor, countP, err))
   {
+    LM_W(("KZ: collectionRangedQuery: error"));
     releaseMongoConnection(connection);
     TIME_STAT_MONGO_READ_WAIT_STOP();
     return false;
@@ -1190,6 +1191,8 @@ bool entitiesQuery
   unsigned int docs = 0;
   while (moreSafe(cursor))
   {
+    LM_W(("KZ: collectionRangedQuery: doc %d", docs));
+
     BSONObj  r;
     try
     {
@@ -1287,6 +1290,8 @@ bool entitiesQuery
     cer->statusCode.fill(SccOk);
     cerV->push_back(cer);
   }
+  LM_W(("KZ: collectionRangedQuery: total docs: %d", docs));
+
   releaseMongoConnection(connection);
 
   /* If we have already reached the pagination limit with local entities, we have ended: no more "potential"

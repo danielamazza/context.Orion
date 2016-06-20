@@ -305,6 +305,7 @@ HttpStatusCode mongoQueryContext
     ContextElementResponseVector rawCerV;    
 
     reqSemTake(__FUNCTION__, "ngsi10 query request", SemReadOp, &reqSemTaken);
+    LM_W(("KZ: Calling entitiesQuery"));
     ok = entitiesQuery(requestP->entityIdVector,
                        requestP->attributeList,
                        requestP->restriction,
@@ -323,8 +324,10 @@ HttpStatusCode mongoQueryContext
                        options[DATE_MODIFIED],
                        apiVersion);
 
+    LM_W(("KZ: entitiesQuery returned %s", ok? "true" : "false"));
     if (badInput)
     {
+      LM_W(("KZ: entitiesQuery flags Bad Input"));
       responseP->errorCode.fill(SccBadRequest, err);
       rawCerV.release();
       reqSemGive(__FUNCTION__, "ngsi10 query request", reqSemTaken);
@@ -344,6 +347,7 @@ HttpStatusCode mongoQueryContext
     /* In the case of empty response, if only generic processing is needed */
     if (rawCerV.size() == 0)
     {
+      LM_W(("KZ: rawCerV.size == 0"));
       if (registrationsQuery(requestP->entityIdVector, requestP->attributeList, &crrV, &err, tenant, servicePathV, 0, 0, false))
       {
         if (crrV.size() > 0)
@@ -421,9 +425,11 @@ HttpStatusCode mongoQueryContext
 
         snprintf(details, sizeof(details), "Number of matching entities: %lld. Offset is %d", *countP, offset);
         responseP->errorCode.fill(SccContextElementNotFound, details);
+        LM_W(("KZ: filling errorCode with SccContextElementNotFound"));
       }
       else
       {
+        LM_W(("KZ: filling errorCode with SccContextElementNotFound"));
         responseP->errorCode.fill(SccContextElementNotFound);
       }
     }
@@ -442,6 +448,7 @@ HttpStatusCode mongoQueryContext
 
     rawCerV.release();
     
+    LM_W(("KZ: FROM"));
     reqSemGive(__FUNCTION__, "ngsi10 query request", reqSemTaken);
     return SccOk;
 }

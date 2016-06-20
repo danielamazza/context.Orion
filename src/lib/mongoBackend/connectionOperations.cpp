@@ -131,6 +131,7 @@ extern bool collectionRangedQuery
     return false;
   }
 
+  LM_W(("KZ: query: %s", q.toString().c_str()));
   LM_T(LmtMongo, ("query() in '%s' collection limit=%d, offset=%d: '%s'", col.c_str(), limit, offset, q.toString().c_str()));
 
   try

@@ -224,13 +224,18 @@ void Entity::fill(const std::string& _id, const std::string& _type, const std::s
   attributeVector.fill(aVec);
 }
 
+
+
+/* ****************************************************************************
+*
+* Entity::fill - 
+*/
 void Entity::fill(QueryContextResponse* qcrsP)
 {
-
   if (qcrsP->errorCode.code == SccContextElementNotFound)
   {
     LM_W(("KZ: The requested entity has not been found"));
-    oe.fill(SccContextElementNotFound, "The requested entity has not been found. Check type and id", "NotFound");
+    oe.fill(SccContextElementNotFound, "Combination of entity-id/attribute-name not found", "NotFound");
   }
   else if (qcrsP->errorCode.code != SccOk)
   {
