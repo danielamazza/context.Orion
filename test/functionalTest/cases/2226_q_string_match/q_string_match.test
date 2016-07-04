@@ -1,0 +1,144 @@
+# Copyright 2016 Telefonica Investigacion y Desarrollo, S.A.U
+#
+# This file is part of Orion Context Broker.
+#
+# Orion Context Broker is free software: you can redistribute it and/or
+# modify it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# Orion Context Broker is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+# General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Orion Context Broker. If not, see http://www.gnu.org/licenses/.
+#
+# For those usages not covered by this license please contact with
+# iot_support at tid dot es
+
+# VALGRIND_READY - to mark the test ready for valgrindTestSuite.sh
+
+--NAME--
+q string filter string match
+
+--SHELL-INIT--
+dbInit CB
+brokerStart CB 0
+
+--SHELL--
+
+#
+# 01. Create room1 with attrs temperature=34 and humidity=567
+# 02. Create room2 with attr pressure
+# 03. Create room3 with attr speed
+# 04. GET /v2/entities?q=humidity~=100
+#
+
+echo "01. Create room1 with attrs temperature=34 and humidity=567"
+echo "==========================================================="
+payload='{
+  "id": "room1",
+  "type": "VcLA",
+  "temperature": {
+    "type": "celsius",
+    "value": 34
+  },
+  "humidity": {
+    "type": "absolute",
+    "value": 567
+  }
+}'
+orionCurl --url /v2/entities --payload "${payload}"
+echo
+echo
+
+
+echo "02. Create room2 with attr pressure"
+echo "==================================="
+payload='{
+  "type": "0Dov",
+  "id": "room2",
+  "pressure": {
+    "type": "bar",
+    "metadata": {
+      "very_hard": {
+        "value": "high",
+        "type": "alarm"
+      }
+    },
+    "value": 989
+  }
+}'
+orionCurl --url /v2/entities --payload "${payload}"
+echo
+echo
+
+
+echo "03. Create room3 with attr speed"
+echo "================================"
+payload='{
+  "type": "1Pij",
+  "id": "room3",
+  "speed": {
+    "type": "kmh",
+    "value": 80
+  }
+}'
+orionCurl --url /v2/entities --payload "${payload}"
+echo
+echo
+
+
+echo "04. GET /v2/entities?q=humidity~=100"
+echo "===================================="
+orionCurl --url /v2/entities?q=humidity~=100
+echo
+echo
+
+
+--REGEXPECT--
+01. Create room1 with attrs temperature=34 and humidity=567
+===========================================================
+HTTP/1.1 201 Created
+Content-Length: 0
+Location: /v2/entities/room1?type=VcLA
+Fiware-Correlator: REGEX([0-9a-f\-]{36})
+Date: REGEX(.*)
+
+
+
+02. Create room2 with attr pressure
+===================================
+HTTP/1.1 201 Created
+Content-Length: 0
+Location: /v2/entities/room2?type=0Dov
+Fiware-Correlator: REGEX([0-9a-f\-]{36})
+Date: REGEX(.*)
+
+
+
+03. Create room3 with attr speed
+================================
+HTTP/1.1 201 Created
+Content-Length: 0
+Location: /v2/entities/room3?type=1Pij
+Fiware-Correlator: REGEX([0-9a-f\-]{36})
+Date: REGEX(.*)
+
+
+
+04. GET /v2/entities?q=humidity~=100
+====================================
+HTTP/1.1 200 OK
+Content-Length: 2
+Fiware-Correlator: REGEX([0-9a-f\-]{36})
+Date: REGEX(.*)
+
+[]
+
+
+--TEARDOWN--
+brokerStop CB
+dbDrop CB
