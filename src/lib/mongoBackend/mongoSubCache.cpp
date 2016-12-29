@@ -427,15 +427,13 @@ int mongoSubCacheItemInsert
 *
 * NOTE
 *   The query for the database ONLY extracts the interesting subscriptions:
-*   - "conditions.type" << "ONCHANGE"
-*
-*   I.e. the subscriptions is for ONCHANGE.
+*   - expiration > current-time: only non-expired subscriptions
 */
 void mongoSubCacheRefresh(const std::string& database)
 {
   LM_T(LmtSubCache, ("Refreshing subscription cache for DB '%s'", database.c_str()));
 
-  BSONObj                   query;      // empty query (all subscriptions)
+  BSONObj                   query       = BSON(CSUB_EXPIRATION << BSON("$gt" << (long long) getCurrentTime()));
   std::string               db          = database;
   std::string               tenant      = tenantFromDb(db);
   std::string               collection  = getSubscribeContextCollectionName(tenant);
