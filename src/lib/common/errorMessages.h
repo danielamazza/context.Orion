@@ -1,5 +1,5 @@
-#ifndef SRC_LIB_COMMON_ERRORMESSAGES_H
-#define SRC_LIB_COMMON_ERRORMESSAGES_H
+#ifndef SRC_LIB_COMMON_ERRORMESSAGES_H_
+#define SRC_LIB_COMMON_ERRORMESSAGES_H_
 
 /*
 *
@@ -67,6 +67,6 @@
 #define ERROR_TOO_MANY                                "TooManyResults"
 #define ERROR_DESC_TOO_MANY_ENTITIES                  "More than one matching entity. Please refine your query"
 
-#define ERROR_DESC_BAD_VERB                       "method not allowed"
+#define ERROR_DESC_BAD_VERB                           "method not allowed"
 
-#endif // SRC_LIB_COMMON_ERRORMESSAGES_H
+#endif  // SRC_LIB_COMMON_ERRORMESSAGES_H_

@@ -494,8 +494,8 @@ static int timezoneOffset(const char* tz)
 *
 * This is common code for Duration and Throttling (at least).
 *
-* Based in http://stackoverflow.com/questions/26895428/how-do-i-parse-an-iso-8601-date-with-optional-milliseconds-to-a-struct-tm-in-c
-*
+* Based on 
+*   stackoverflow.com/questions/26895428/how-do-i-parse-an-iso-8601-date-with-optional-milliseconds-to-a-struct-tm-in-c
 */
 int64_t parse8601Time(const std::string& ss)
 {
@@ -530,12 +530,13 @@ int64_t parse8601Time(const std::string& ss)
   // Default timezone is Z, sscanf will override it if an explicit timezone is provided
   snprintf(tz, sizeof(tz), "%s", "Z");
 
-  bool validDate = ((sscanf(ss.c_str(), "%4d-%2d-%2dT%2d:%2d:%f%s", &y, &M, &d, &h, &m, &s, tz) >= 6)  ||  // Trying hh:mm:ss.sss or hh:mm:ss
-                    (sscanf(ss.c_str(), "%4d-%2d-%2dT%2d%2d%f%s", &y, &M, &d, &h, &m, &s, tz) >= 6)    ||  // Trying hhmmss.sss or hhmmss
-                    (sscanf(ss.c_str(), "%4d-%2d-%2dT%2d:%2d%s", &y, &M, &d, &h, &m, tz) >= 5)         ||  // Trying hh:mm
-                    (sscanf(ss.c_str(), "%4d-%2d-%2dT%2d%2d%s", &y, &M, &d, &h, &m, tz) >= 5)          ||  // Trying hhmm
-                    (sscanf(ss.c_str(), "%4d-%2d-%2dT%2d%s", &y, &M, &d, &h, tz) >= 4)                 ||  // Trying hh
-                    (sscanf(ss.c_str(), "%4d-%2d-%2d%s", &y, &M, &d, tz) == 3));                           // Trying just date (in this case tz is not allowed)
+  const char* cs = ss.c_str();
+  bool validDate = ((sscanf(cs, "%4d-%2d-%2dT%2d:%2d:%f%s", &y, &M, &d, &h, &m, &s, tz) >= 6) ||  // hh:mm:ss[.sss]
+                    (sscanf(cs, "%4d-%2d-%2dT%2d%2d%f%s", &y, &M, &d, &h, &m, &s, tz) >= 6)   ||  // hhmmss[.sss]
+                    (sscanf(cs, "%4d-%2d-%2dT%2d:%2d%s", &y, &M, &d, &h, &m, tz) >= 5)        ||  // hh:mm
+                    (sscanf(cs, "%4d-%2d-%2dT%2d%2d%s", &y, &M, &d, &h, &m, tz) >= 5)         ||  // hhmm
+                    (sscanf(cs, "%4d-%2d-%2dT%2d%s", &y, &M, &d, &h, tz) >= 4)                ||  // hh
+                    (sscanf(cs, "%4d-%2d-%2d%s", &y, &M, &d, tz) == 3));                          // just date (no tz)
 
   if (!validDate)
   {
@@ -553,12 +554,12 @@ int64_t parse8601Time(const std::string& ss)
   // of the tm struct)
 
   struct tm time;
-  time.tm_year = y - 1900; // Year since 1900
-  time.tm_mon  = M - 1;    // 0-11
-  time.tm_mday = d;        // 1-31
-  time.tm_hour = h;        // 0-23
-  time.tm_min  = m;        // 0-59
-  time.tm_sec  = (int)s;   // 0-61 (0-60 in C++11)
+  time.tm_year = y - 1900;  // Year since 1900
+  time.tm_mon  = M - 1;     // 0-11
+  time.tm_mday = d;         // 1-31
+  time.tm_hour = h;         // 0-23
+  time.tm_min  = m;         // 0-59
+  time.tm_sec  = (int) s;   // 0-61 (0-60 in C++11)
 
   return (int64_t) (timegm(&time) - offset);
 }
@@ -569,10 +570,20 @@ int64_t parse8601Time(const std::string& ss)
 *
 * orderCoordsForBox
 *
-* It return false in the case of a 'degenerate' box
+* Returns false in the case of a 'degenerate' box
 *
 */
-bool orderCoordsForBox(double* minLat, double* maxLat, double* minLon, double* maxLon, double lat1, double lat2, double lon1, double lon2)
+bool orderCoordsForBox
+(
+  double*  minLat,
+  double*  maxLat,
+  double*  minLon,
+  double*  maxLon,
+  double   lat1,
+  double   lat2,
+  double   lon1,
+  double   lon2
+)
 {
   if ((lat1 == lat2) || (lon1 == lon2))
   {

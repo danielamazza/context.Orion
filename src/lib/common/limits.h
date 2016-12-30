@@ -55,7 +55,9 @@
 #define SERVICE_PATH_MAX_COMPONENTS       10
 #define SERVICE_PATH_MAX_LEVELS           10
 #define SERVICE_PATH_MAX_COMPONENT_LEN    50
-#define SERVICE_PATH_MAX_TOTAL            (((SERVICE_PATH_MAX_COMPONENT_LEN + 1) * SERVICE_PATH_MAX_LEVELS) + 2) * SERVICE_PATH_MAX_COMPONENTS
+#define SPT(comps, levels, compLen)       ((((compLen + 1) * levels) + 2) * comps)
+
+#define SERVICE_PATH_MAX_TOTAL SPT(SERVICE_PATH_MAX_COMPONENTS, SERVICE_PATH_MAX_LEVELS, SERVICE_PATH_MAX_COMPONENT_LEN)
 
 
 
@@ -85,7 +87,7 @@
 *
 * PAYLOAD_MAX_SIZE - 
 */
-#define PAYLOAD_MAX_SIZE   (1 * 1024 * 1024) // 1 MB Maximum size of the payload
+#define PAYLOAD_MAX_SIZE   (1 * 1024 * 1024)  // 1 MB Maximum size of the payload
 
 
 
@@ -103,7 +105,7 @@
 *
 * STATIC_BUFFER_SIZE - to avoid mallocs for "smaller" requests
 */
-#define STATIC_BUFFER_SIZE (32 * 1024) // 32 KB 
+#define STATIC_BUFFER_SIZE (32 * 1024)  // 32 KB
 
 
 
@@ -138,7 +140,7 @@
 * Values for URI parameters
 */
 #define DEFAULT_PAGINATION_LIMIT        "20"
-#define DEFAULT_PAGINATION_LIMIT_INT     20 
+#define DEFAULT_PAGINATION_LIMIT_INT     20
 
 
 

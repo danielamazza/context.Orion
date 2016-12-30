@@ -1,5 +1,5 @@
-#ifndef SRC_LIB_COMMON_SYNCQOVERFLOW_H
-#define SRC_LIB_COMMON_SYNCQOVERFLOW_H
+#ifndef SRC_LIB_COMMON_SYNCQOVERFLOW_H_
+#define SRC_LIB_COMMON_SYNCQOVERFLOW_H_
 
 /*
 *
@@ -25,11 +25,11 @@
 *
 * Author: Orion dev team
 */
-
-#include <queue>
-
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/condition_variable.hpp>
+#include <queue>
+
+
 
 /* ****************************************************************************
 *
@@ -38,18 +38,20 @@
 template <typename Data>
 class SyncQOverflow
 {
-private:
-    std::queue<Data> queue;
-    mutable boost::mutex mtx;
-    boost::condition_variable addedElement;
-    size_t max_size;
+ private:
+    std::queue<Data>           queue;
+    mutable boost::mutex       mtx;
+    boost::condition_variable  addedElement;
+    size_t                     max_size;
 
-public:
+ public:
     SyncQOverflow(size_t sz): max_size(sz) {}
-    bool try_push(Data element);
-    Data pop();
-    size_t size() const;
+    bool    try_push(Data element);
+    Data    pop();
+    size_t  size() const;
 };
+
+
 
 /* ****************************************************************************
 *
@@ -61,14 +63,18 @@ bool SyncQOverflow<Data>::try_push(Data element)
   boost::mutex::scoped_lock lock(mtx);
 
   if (queue.size() < max_size)
-    {
-      queue.push(element);
-      lock.unlock();
-      addedElement.notify_one();
-      return true;
-    }
+  {
+    queue.push(element);
+    lock.unlock();
+    addedElement.notify_one();
+
+    return true;
+  }
+
   return false;
 }
+
+
 
 /* ****************************************************************************
 *
@@ -78,15 +84,19 @@ template <typename Data>
 Data SyncQOverflow<Data>::pop()
 {
   boost::mutex::scoped_lock lock(mtx);
-  while(queue.empty())
-    {
-      addedElement.wait(lock);
-    }
 
-  Data element=queue.front();
+  while (queue.empty())
+  {
+    addedElement.wait(lock);
+  }
+
+  Data element = queue.front();
   queue.pop();
+
   return element;
 }
+
+
 
 /* ****************************************************************************
 *
@@ -99,4 +109,5 @@ size_t SyncQOverflow<Data>::size() const
 
   return queue.size();
 }
-#endif // SRC_LIB_COMMON_SYNCQOVERFLOW_H
+
+#endif  // SRC_LIB_COMMON_SYNCQOVERFLOW_H_

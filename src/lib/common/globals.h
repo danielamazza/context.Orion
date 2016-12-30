@@ -45,7 +45,7 @@
 #define EARTH_RADIUS_METERS     6371000
 
 #define LOCATION_WGS84          "WGS84"
-#define LOCATION_WGS84_LEGACY   "WSG84"    /* We fixed the right string at 0.17.0, but the old one needs to be mantained */
+#define LOCATION_WGS84_LEGACY   "WSG84"  // Fixed in 0.17.0, but the old one needs to be mantained
 
 
 
@@ -128,7 +128,8 @@
 #define OPT_DATE_MODIFIED   DATE_MODIFIED
 #define OPT_NO_ATTR_DETAIL  "noAttrDetail"
 
- 
+
+
 /* ****************************************************************************
 *
 * NGSIv2 "flavours" to tune some behaviours in mongoBackend -
@@ -349,7 +350,16 @@ extern void correlatorIdSet(const char* corrId);
 * It return false in the case of a 'degenerate' box
 *
 */
-extern bool orderCoordsForBox(double* minLat, double* maxLat, double* minLon, double* maxLon, double lat1, double lat2, double lon1, double lon2);
+extern bool orderCoordsForBox
+(
+  double* minLat,
+  double* maxLat,
+  double* minLon,
+  double* maxLon,
+  double  lat1,
+  double  lat2,
+  double  lon1,
+  double  lon2
+);
 
 #endif  // SRC_LIB_COMMON_GLOBALS_H_
-	

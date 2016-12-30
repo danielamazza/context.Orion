@@ -25,7 +25,9 @@
 #include <semaphore.h>
 #include <errno.h>
 #include <time.h>
+
 #include <map>  // for curl contexts
+#include <string>
 
 #include "logMsg/logMsg.h"
 #include "logMsg/traceLevels.h"
@@ -49,7 +51,7 @@ static SemOpType  reqPolicy;
 
 /* ****************************************************************************
 *
-* Time measuring variables - 
+* Time measuring variables -
 */
 static struct timespec accReqSemTime      = { 0, 0 };
 static struct timespec accTransSemTime    = { 0, 0 };
@@ -65,7 +67,7 @@ static struct timespec accTimeStatSemTime = { 0, 0 };
 *   parameter #2: 0 - the semaphore is to be shared between threads,
 *   parameter #3: 1 - initially the semaphore is free
 *
-* RETURN VALUE (of sem_init)
+* RETURN VALUE
 *   0 on success,
 *  -1 on failure
 *
@@ -219,7 +221,7 @@ float semTimeTimeStatGet(void)
 
 /* ****************************************************************************
 *
-* semTimeReqReset - 
+* semTimeReqReset -
 */
 void semTimeReqReset(void)
 {
@@ -231,7 +233,7 @@ void semTimeReqReset(void)
 
 /* ****************************************************************************
 *
-* semTimeTransReset - 
+* semTimeTransReset -
 */
 void semTimeTransReset(void)
 {
@@ -243,7 +245,7 @@ void semTimeTransReset(void)
 
 /* ****************************************************************************
 *
-* semTimeCacheReset - 
+* semTimeCacheReset -
 */
 void semTimeCacheReset(void)
 {
@@ -255,7 +257,7 @@ void semTimeCacheReset(void)
 
 /* ****************************************************************************
 *
-* semTimeTimeStatReset - 
+* semTimeTimeStatReset -
 */
 void semTimeTimeStatReset(void)
 {
@@ -460,7 +462,7 @@ int timeStatSemGive(const char* who, const char* what)
 
 /* ****************************************************************************
 *
-* reqSemGet - 
+* reqSemGet -
 */
 const char* reqSemGet(void)
 {
@@ -475,15 +477,15 @@ const char* reqSemGet(void)
   {
     return "taken";
   }
-  
-  return "free";  
+
+  return "free";
 }
 
 
 
 /* ****************************************************************************
 *
-* transSemGet - 
+* transSemGet -
 */
 const char* transSemGet(void)
 {
@@ -498,15 +500,15 @@ const char* transSemGet(void)
   {
     return "taken";
   }
-  
-  return "free";  
+
+  return "free";
 }
 
 
 
 /* ****************************************************************************
 *
-* cacheSemGet - 
+* cacheSemGet -
 */
 const char* cacheSemGet(void)
 {
@@ -521,15 +523,15 @@ const char* cacheSemGet(void)
   {
     return "taken";
   }
-  
-  return "free";  
+
+  return "free";
 }
 
 
 
 /* ****************************************************************************
 *
-* timeStatSemGet - 
+* timeStatSemGet -
 */
 const char* timeStatSemGet(void)
 {
@@ -544,8 +546,8 @@ const char* timeStatSemGet(void)
   {
     return "taken";
   }
-  
-  return "free";  
+
+  return "free";
 }
 
 
@@ -570,7 +572,7 @@ static int                                         endpoint_mutexes_errors = 0;
 
 /* ****************************************************************************
 *
-* connectionContextSemGet - 
+* connectionContextSemGet -
 */
 const char* connectionContextSemGet(void)
 {
@@ -581,7 +583,7 @@ const char* connectionContextSemGet(void)
 
 /* ****************************************************************************
 *
-* connectionSubContextSemGet - 
+* connectionSubContextSemGet -
 */
 const char* connectionSubContextSemGet(void)
 {
@@ -594,9 +596,10 @@ const char* connectionSubContextSemGet(void)
 static struct timespec accCCMutexTime = { 0, 0 };
 
 
+
 /* ****************************************************************************
 *
-* curl_context_cleanup - 
+* curl_context_cleanup -
 */
 void curl_context_cleanup(void)
 {
@@ -673,7 +676,7 @@ static int get_curl_context_reuse(const std::string& key, struct curl_context* p
       pcc->pmutex = NULL;    // unnecessary but clearer
     }
   }
-  else // previous context found
+  else  // previous context found
   {
     *pcc = it->second;
   }
@@ -709,7 +712,7 @@ static int get_curl_context_reuse(const std::string& key, struct curl_context* p
       return s;
     }
     ++endpoint_mutexes_taken;
-    
+
     if (semWaitStatistics)
     {
       clock_gettime(CLOCK_REALTIME, &endTime);
@@ -739,6 +742,8 @@ static int get_curl_context_reuse(const std::string& key, struct curl_context* p
   return 0;
 }
 
+
+
 /* ****************************************************************************
 *
 * get_curl_context_new -
@@ -759,13 +764,14 @@ static int get_curl_context_new(const std::string& key, struct curl_context* pcc
   return 0;
 }
 
+
+
 /* ****************************************************************************
 *
 * get_curl_context -
 */
 int get_curl_context(const std::string& key, struct curl_context* pcc)
 {
-
   if (strcmp(notificationMode, "persistent") == 0)
   {
     LM_T(LmtCurlContext, ("using persistent curl_contexts"));
@@ -774,7 +780,6 @@ int get_curl_context(const std::string& key, struct curl_context* pcc)
 
   return get_curl_context_new(key, pcc);
 }
-
 
 
 
@@ -788,7 +793,7 @@ static int release_curl_context_reuse(struct curl_context *pcc, bool final)
   if (pcc->curl != NULL)
   {
     curl_easy_reset(pcc->curl);
-    pcc->curl = NULL; // It will remain in global map
+    pcc->curl = NULL;  // It will remain in global map
   }
 
   // Unlock the mutex if not an empty context
@@ -808,11 +813,13 @@ static int release_curl_context_reuse(struct curl_context *pcc, bool final)
     }
     --endpoint_mutexes_taken;
 
-    pcc->pmutex = NULL; // It will remain in global map
+    pcc->pmutex = NULL;  // It will remain in global map
   }
 
   return 0;
 }
+
+
 
 /* ****************************************************************************
 *
@@ -830,6 +837,8 @@ static int release_curl_context_new(struct curl_context *pcc, bool final)
   return 0;
 }
 
+
+
 /* ****************************************************************************
 *
 * release_curl_context -
@@ -844,6 +853,8 @@ int release_curl_context(struct curl_context *pcc, bool final)
   return release_curl_context_new(pcc, final);
 }
 
+
+
 /* ****************************************************************************
 *
 * mutexTimeCCReset -
@@ -853,6 +864,8 @@ void mutexTimeCCReset(void)
   accCCMutexTime.tv_sec  = 0;
   accCCMutexTime.tv_nsec = 0;
 }
+
+
 
 /* ****************************************************************************
 *

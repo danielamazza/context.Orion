@@ -25,6 +25,7 @@
 *
 * Author: Ken Zangelin
 */
+#include <inttypes.h>
 #include <string>
 #include <sstream>
 #include <iomanip>
@@ -32,8 +33,12 @@
 
 #include "common/limits.h"
 
+
+
 // the same macro in parseArg library
 #define FT(x) (x == true)? "true" : "false"
+
+
 
 /* ****************************************************************************
 *
@@ -45,7 +50,7 @@ extern bool isIPv6(const std::string& in);
 
 /* ****************************************************************************
 *
-* stringSplit - 
+* stringSplit -
 */
 extern int stringSplit(const std::string& in, char delimiter, std::vector<std::string>& outV);
 
@@ -85,7 +90,7 @@ extern std::string parsedUptime(int uptime);
 
 /* ****************************************************************************
 *
-* onlyWs - 
+* onlyWs -
 */
 extern bool onlyWs(const char* s);
 
@@ -93,7 +98,7 @@ extern bool onlyWs(const char* s);
 
 /* ****************************************************************************
 *
-* string2coords - 
+* string2coords -
 */
 extern bool string2coords(const std::string& s, double& latitude, double& longitude);
 
@@ -115,7 +120,7 @@ bool versionParse
 
 /* ****************************************************************************
 *
-* atoF - 
+* atoF -
 */
 extern double atoF(const char* string, std::string* errorMsg);
 
@@ -123,7 +128,7 @@ extern double atoF(const char* string, std::string* errorMsg);
 
 /* ****************************************************************************
 *
-* strToLower - 
+* strToLower -
 */
 extern char* strToLower(char* to, const char* from, int toSize);
 
@@ -131,7 +136,7 @@ extern char* strToLower(char* to, const char* from, int toSize);
 
 /* ****************************************************************************
 *
-* strReplace - 
+* strReplace -
 */
 extern void strReplace
 (
@@ -146,7 +151,7 @@ extern void strReplace
 
 /* ****************************************************************************
 *
-* servicePathCheck - 
+* servicePathCheck -
 */
 extern std::string servicePathCheck(const char* servicePath);
 
@@ -183,7 +188,7 @@ extern unsigned int decimalDigits(double d);
 *
 */
 template <typename T> std::string toString(T t)
-{      
+{
   std::ostringstream ss;
 
   ss << t;
@@ -200,7 +205,7 @@ template <> std::string toString(float f);
 * isodate2str -
 *
 */
-extern std::string isodate2str(long long timestamp);
+extern std::string isodate2str(int64_t timestamp);
 
 
 

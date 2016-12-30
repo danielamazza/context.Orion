@@ -25,9 +25,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>    // modf
 #include <string>
 #include <vector>
-#include <math.h>    // modf
 
 #include "logMsg/logMsg.h"
 #include "logMsg/traceLevels.h"
@@ -40,7 +40,7 @@
 
 /* ****************************************************************************
 *
-* DEFAULT_HTTP_PORT - 
+* DEFAULT_HTTP_PORT -
 * DEFAULT_HTTPS_PORT -
 */
 #define DEFAULT_HTTP_PORT   80
@@ -159,7 +159,7 @@ bool getIPv6Port(const std::string& in, std::string& outIp, std::string& outPort
 
 /* ****************************************************************************
 *
-* stringSplit - 
+* stringSplit -
 */
 int stringSplit(const std::string& in, char delimiter, std::vector<std::string>& outV)
 {
@@ -233,7 +233,7 @@ int stringSplit(const std::string& in, char delimiter, std::vector<std::string>&
 * NOTE
 *   About the components in a URL: according to https://tools.ietf.org/html/rfc3986#section-3,
 *   the scheme component is mandatory, i.e. the 'http://' or 'https://' must be present,
-*   otherwise the URL is invalid. 
+*   otherwise the URL is invalid.
 */
 bool parseUrl(const std::string& url, std::string& host, int& port, std::string& path, std::string& protocol)
 {
@@ -255,7 +255,7 @@ bool parseUrl(const std::string& url, std::string& host, int& port, std::string&
 
   /* First: split by the first '/' to get host:ip and path */
   std::vector<std::string>  urlTokens;
-  int                       components = stringSplit(url, '/', urlTokens);  
+  int                       components = stringSplit(url, '/', urlTokens);
 
   //
   // Ensuring the scheme is present
@@ -331,7 +331,7 @@ bool parseUrl(const std::string& url, std::string& host, int& port, std::string&
 
     if (components == 2)
     {
-      /* Sanity check (corresponding to http://xxxx:/path) */
+      // Sanity check (corresponding to http://xxxx:/path)
       if (hostTokens[1].length() == 0)
       {
         return false;
@@ -359,6 +359,7 @@ char* i2s(int i, char* placeholder, int placeholderSize)
   snprintf(placeholder, placeholderSize, "%d", i);
   return placeholder;
 }
+
 
 
 /* ****************************************************************************
@@ -390,7 +391,7 @@ std::string parsedUptime(int uptime)
 
 /* ****************************************************************************
 *
-* onlyWs - 
+* onlyWs -
 */
 bool onlyWs(const char* s)
 {
@@ -416,7 +417,7 @@ bool onlyWs(const char* s)
 
 /* ****************************************************************************
 *
-* string2coords - 
+* string2coords -
 */
 bool string2coords(const std::string& s, double& latitude, double& longitude)
 {
@@ -556,12 +557,12 @@ bool versionParse(const std::string& version, int& mayor, int& minor, std::strin
 
 /* ****************************************************************************
 *
-* atoF - 
+* atoF -
 */
 double atoF(const char* string, std::string* errorMsg)
 {
-  char* cP = (char*) string;
-  int   noOf;
+  char*  cP = (char*) string;
+  int    noOf;
 
   *errorMsg = "";
 
@@ -584,8 +585,9 @@ double atoF(const char* string, std::string* errorMsg)
   }
 
   // Number of dots
-  noOf = 0;
   char* tmp = cP;
+
+  noOf = 0;
   while (*tmp != 0)
   {
     if (*tmp == '.')
@@ -620,7 +622,7 @@ double atoF(const char* string, std::string* errorMsg)
 
 /* ****************************************************************************
 *
-* strToLower - 
+* strToLower -
 */
 char* strToLower(char* to, const char* from, int toSize)
 {
@@ -654,7 +656,7 @@ char* strToLower(char* to, const char* from, int toSize)
 
 /* ****************************************************************************
 *
-* strReplace - 
+* strReplace -
 */
 void strReplace(char* to, int toLen, const char* from, const char* oldString, const char* newString)
 {
@@ -702,16 +704,11 @@ std::string servicePathCheck(const char* servicePath)
   //
   while (*servicePath != 0)
   {
-    if ((*servicePath >= 'A') && (*servicePath <= 'Z'))
-      ;
-    else if ((*servicePath >= 'a') && (*servicePath <= 'z'))
-      ;
-    else if ((*servicePath >= '0') && (*servicePath <= '9'))
-      ;
-    else if (*servicePath == '_')
-      ;
-    else if (*servicePath == '/')
-      ;
+    if      ((*servicePath >= 'A') && (*servicePath <= 'Z'))  {}
+    else if ((*servicePath >= 'a') && (*servicePath <= 'z'))  {}
+    else if ((*servicePath >= '0') && (*servicePath <= '9'))  {}
+    else if  (*servicePath == '_')                            {}
+    else if  (*servicePath == '/')                            {}
     else
     {
       std::string details = std::string("Invalid character '") + *servicePath + "' in Service-Path";
@@ -738,7 +735,7 @@ std::string servicePathCheck(const char* servicePath)
 *   If endptr is not NULL, a pointer to the character after the last character
 *   used in the conversion is stored in the location referenced by endptr.
 *
-*   If no conversion is performed, zero is returned and the value of nptr is stored 
+*   If no conversion is performed, zero is returned and the value of nptr is stored
 *   in the location referenced by endptr.
 *
 * Now, this is just perfect. It is just what we need to assure that a string is
@@ -849,20 +846,19 @@ bool str2double(const char* s, double* dP)
 *   "A8":  42.000000010, (fail)
 *   "A9":  42,           (fail)
 *   "A10": 42,
-*
 */
 unsigned int decimalDigits(double d)
 {
-  unsigned int digits = 0;
-
-  double intPart;
-  double decimalPart = fabs(modf(d, &intPart));
+  unsigned int  digits = 0;
+  double        intPart;
+  double        decimalPart = fabs(modf(d, &intPart));
 
   while (decimalPart > PRECISION)
   {
     digits++;
     decimalPart *= 10;
-    decimalPart = modf(decimalPart, &intPart);
+    decimalPart  = modf(decimalPart, &intPart);
+
     if (fabs(1 - decimalPart ) < PRECISION)
     {
       // Using a greater threshold (e.g. 0.01) would cause rounding errors,
@@ -874,15 +870,9 @@ unsigned int decimalDigits(double d)
     }
   }
 
-  if (digits > PRECISION_DIGITS)
-  {
-    return PRECISION_DIGITS;
-  }
-  else
-  {
-    return digits;
-  }
+  return (digits > PRECISION_DIGITS)? PRECISION_DIGITS : digits;
 }
+
 
 
 /* ****************************************************************************
@@ -893,9 +883,9 @@ unsigned int decimalDigits(double d)
 */
 template <> std::string toString(double f)
 {
-  std::ostringstream ss;
+  std::ostringstream  ss;
+  unsigned int        digits = decimalDigits(f);
 
-  unsigned int digits = decimalDigits(f);
   if (digits > 0)
   {
     ss << std::fixed << std::setprecision(digits);
@@ -907,21 +897,22 @@ template <> std::string toString(double f)
 }
 
 
-/*****************************************************************************
+
+/* ****************************************************************************
 *
 * isodate2str -
 *
-* FIXME P6: change implementation to use gmtime_r
-*
+* 80 bytes is enough to store any ISO8601 string safely
+* We use gmtime() to get UTC strings, otherwise we would use localtime()
+* Date pattern: 1970-04-26T17:46:40.00Z
 */
-std::string isodate2str(long long timestamp)
+std::string isodate2str(int64_t timestamp)
 {
-  // 80 bytes is enough to store any ISO8601 string safely
-  // We use gmtime() to get UTC strings, otherwise we would use localtime()
-  // Date pattern: 1970-04-26T17:46:40.00Z
-  char   buffer[80];
-  time_t rawtime = (time_t) timestamp;
-  strftime(buffer, sizeof(buffer), "%Y-%m-%dT%H:%M:%S.00Z", gmtime(&rawtime));
+  char       buffer[80];
+  time_t     rawtime = (time_t) timestamp;
+  struct tm  res;
+
+  strftime(buffer, sizeof(buffer), "%Y-%m-%dT%H:%M:%S.00Z", gmtime_r(&rawtime, &res));
   return std::string(buffer);
 }
 

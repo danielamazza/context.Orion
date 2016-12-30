@@ -25,6 +25,8 @@
 *
 * Author: Ken Zangelin
 */
+#include <string>
+
 #include "ngsi/Request.h"
 #include "common/MimeType.h"
 #include "common/clockFunctions.h"
@@ -39,7 +41,7 @@
   struct timespec renderStart;                                         \
   struct timespec renderEnd;                                           \
                                                                        \
-  if (timingStatistics)                                               \
+  if (timingStatistics)                                                \
   {                                                                    \
     clock_gettime(CLOCK_REALTIME, &renderStart);                       \
   }

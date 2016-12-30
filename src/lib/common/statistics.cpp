@@ -22,6 +22,8 @@
 *
 * Author: Ken Zangelin
 */
+#include <string>
+
 #include "common/statistics.h"
 #include "common/tag.h"
 #include "ngsi/Request.h"
@@ -190,31 +192,31 @@ inline float timeSpecToFloat(const struct timespec& t)
 * xxxRenderTime        - the time that the last render took to render the response
 *
 */
+#define NON_ZERO(obj, field) ((obj.field.tv_sec != 0) || (obj.field.tv_nsec != 0))
 std::string renderTimingStatistics(void)
 {
-
   timeStatSemTake(__FUNCTION__, "putting stats together");
 
-  bool accJsonV1ParseTime      = (accTimeStat.jsonV1ParseTime.tv_sec != 0)        || (accTimeStat.jsonV1ParseTime.tv_nsec != 0);
-  bool accJsonV2ParseTime      = (accTimeStat.jsonV2ParseTime.tv_sec != 0)        || (accTimeStat.jsonV2ParseTime.tv_nsec != 0);
-  bool accMongoBackendTime     = (accTimeStat.mongoBackendTime.tv_sec != 0)       || (accTimeStat.mongoBackendTime.tv_nsec != 0);
-  bool accMongoReadWaitTime    = (accTimeStat.mongoReadWaitTime.tv_sec != 0)      || (accTimeStat.mongoReadWaitTime.tv_nsec != 0);
-  bool accMongoWriteWaitTime   = (accTimeStat.mongoWriteWaitTime.tv_sec != 0)     || (accTimeStat.mongoWriteWaitTime.tv_nsec != 0);
-  bool accMongoCommandWaitTime = (accTimeStat.mongoCommandWaitTime.tv_sec != 0)   || (accTimeStat.mongoCommandWaitTime.tv_nsec != 0);
-  bool accRenderTime           = (accTimeStat.renderTime.tv_sec != 0)             || (accTimeStat.renderTime.tv_nsec != 0);
-  bool accReqTime              = (accTimeStat.reqTime.tv_sec != 0)                || (accTimeStat.reqTime.tv_nsec != 0);
+  bool accJsonV1ParseTime       = NON_ZERO(accTimeStat, jsonV1ParseTime);
+  bool accJsonV2ParseTime       = NON_ZERO(accTimeStat, jsonV2ParseTime);
+  bool accMongoBackendTime      = NON_ZERO(accTimeStat, mongoBackendTime);
+  bool accMongoReadWaitTime     = NON_ZERO(accTimeStat, mongoReadWaitTime);
+  bool accMongoWriteWaitTime    = NON_ZERO(accTimeStat, mongoWriteWaitTime);
+  bool accMongoCommandWaitTime  = NON_ZERO(accTimeStat, mongoCommandWaitTime);
+  bool accRenderTime            = NON_ZERO(accTimeStat, renderTime);
+  bool accReqTime               = NON_ZERO(accTimeStat, reqTime);
 
-  bool lastJsonV1ParseTime      = (lastTimeStat.jsonV1ParseTime.tv_sec != 0)      || (lastTimeStat.jsonV1ParseTime.tv_nsec != 0);
-  bool lastJsonV2ParseTime      = (lastTimeStat.jsonV2ParseTime.tv_sec != 0)      || (lastTimeStat.jsonV2ParseTime.tv_nsec != 0);
-  bool lastMongoBackendTime     = (lastTimeStat.mongoBackendTime.tv_sec != 0)     || (lastTimeStat.mongoBackendTime.tv_nsec != 0);
-  bool lastMongoReadWaitTime    = (lastTimeStat.mongoReadWaitTime.tv_sec != 0)    || (lastTimeStat.mongoReadWaitTime.tv_nsec != 0);
-  bool lastMongoWriteWaitTime   = (lastTimeStat.mongoWriteWaitTime.tv_sec != 0)   || (lastTimeStat.mongoWriteWaitTime.tv_nsec != 0);
-  bool lastMongoCommandWaitTime = (lastTimeStat.mongoCommandWaitTime.tv_sec != 0) || (lastTimeStat.mongoCommandWaitTime.tv_nsec != 0);
-  bool lastRenderTime           = (lastTimeStat.renderTime.tv_sec != 0)           || (lastTimeStat.renderTime.tv_nsec != 0);
-  bool lastReqTime              = (lastTimeStat.reqTime.tv_sec != 0)              || (lastTimeStat.reqTime.tv_nsec != 0);
+  bool lastJsonV1ParseTime      = NON_ZERO(lastTimeStat, jsonV1ParseTime);
+  bool lastJsonV2ParseTime      = NON_ZERO(lastTimeStat, jsonV2ParseTime);
+  bool lastMongoBackendTime     = NON_ZERO(lastTimeStat, mongoBackendTime);
+  bool lastMongoReadWaitTime    = NON_ZERO(lastTimeStat, mongoReadWaitTime);
+  bool lastMongoWriteWaitTime   = NON_ZERO(lastTimeStat, mongoWriteWaitTime);
+  bool lastMongoCommandWaitTime = NON_ZERO(lastTimeStat, mongoCommandWaitTime);
+  bool lastRenderTime           = NON_ZERO(lastTimeStat, renderTime);
+  bool lastReqTime              = NON_ZERO(lastTimeStat, reqTime);
 
   bool last = lastJsonV1ParseTime || lastJsonV2ParseTime || lastMongoBackendTime || lastRenderTime || lastReqTime;
-  bool acc  = accJsonV1ParseTime || accJsonV2ParseTime || accMongoBackendTime || accRenderTime || accReqTime;
+  bool acc  = accJsonV1ParseTime  || accJsonV2ParseTime  || accMongoBackendTime  || accRenderTime  || accReqTime;
 
   if (!acc && !last)
   {
@@ -226,33 +228,33 @@ std::string renderTimingStatistics(void)
 
   if (acc)
   {
-    JsonHelper accJh;
+    JsonHelper jha;
 
-    if (accJsonV1ParseTime)      accJh.addFloat("jsonV1Parse",      timeSpecToFloat(accTimeStat.jsonV1ParseTime));
-    if (accJsonV2ParseTime)      accJh.addFloat("jsonV2Parse",      timeSpecToFloat(accTimeStat.jsonV2ParseTime));
-    if (accMongoBackendTime)     accJh.addFloat("mongoBackend",     timeSpecToFloat(accTimeStat.mongoBackendTime));
-    if (accMongoReadWaitTime)    accJh.addFloat("mongoReadWait",    timeSpecToFloat(accTimeStat.mongoReadWaitTime));
-    if (accMongoWriteWaitTime)   accJh.addFloat("mongoWriteWait",   timeSpecToFloat(accTimeStat.mongoWriteWaitTime));
-    if (accMongoCommandWaitTime) accJh.addFloat("mongoCommandWait", timeSpecToFloat(accTimeStat.mongoCommandWaitTime));
-    if (accRenderTime)           accJh.addFloat("render",           timeSpecToFloat(accTimeStat.renderTime));
-    if (accReqTime)              accJh.addFloat("total",            timeSpecToFloat(accTimeStat.reqTime));
+    if (accJsonV1ParseTime)      jha.addFloat("jsonV1Parse",      timeSpecToFloat(accTimeStat.jsonV1ParseTime));
+    if (accJsonV2ParseTime)      jha.addFloat("jsonV2Parse",      timeSpecToFloat(accTimeStat.jsonV2ParseTime));
+    if (accMongoBackendTime)     jha.addFloat("mongoBackend",     timeSpecToFloat(accTimeStat.mongoBackendTime));
+    if (accMongoReadWaitTime)    jha.addFloat("mongoReadWait",    timeSpecToFloat(accTimeStat.mongoReadWaitTime));
+    if (accMongoWriteWaitTime)   jha.addFloat("mongoWriteWait",   timeSpecToFloat(accTimeStat.mongoWriteWaitTime));
+    if (accMongoCommandWaitTime) jha.addFloat("mongoCommandWait", timeSpecToFloat(accTimeStat.mongoCommandWaitTime));
+    if (accRenderTime)           jha.addFloat("render",           timeSpecToFloat(accTimeStat.renderTime));
+    if (accReqTime)              jha.addFloat("total",            timeSpecToFloat(accTimeStat.reqTime));
 
-    jh.addRaw("accumulated", accJh.str());
+    jh.addRaw("accumulated", jha.str());
   }
   if (last)
   {
-    JsonHelper lastJh;
+    JsonHelper jhl;
 
-    if (lastJsonV1ParseTime)      lastJh.addFloat("jsonV1Parse",      timeSpecToFloat(lastTimeStat.jsonV1ParseTime));
-    if (lastJsonV2ParseTime)      lastJh.addFloat("jsonV2Parse",      timeSpecToFloat(lastTimeStat.jsonV2ParseTime));
-    if (lastMongoBackendTime)     lastJh.addFloat("mongoBackend",     timeSpecToFloat(lastTimeStat.mongoBackendTime));
-    if (lastMongoReadWaitTime)    lastJh.addFloat("mongoReadWait",    timeSpecToFloat(lastTimeStat.mongoReadWaitTime));
-    if (lastMongoWriteWaitTime)   lastJh.addFloat("mongoWriteWait",   timeSpecToFloat(lastTimeStat.mongoWriteWaitTime));
-    if (lastMongoCommandWaitTime) lastJh.addFloat("mongoCommandWait", timeSpecToFloat(lastTimeStat.mongoCommandWaitTime));
-    if (lastRenderTime)           lastJh.addFloat("render",           timeSpecToFloat(lastTimeStat.renderTime));
-    if (lastReqTime)              lastJh.addFloat("total",            timeSpecToFloat(lastTimeStat.reqTime));
+    if (lastJsonV1ParseTime)      jhl.addFloat("jsonV1Parse",      timeSpecToFloat(lastTimeStat.jsonV1ParseTime));
+    if (lastJsonV2ParseTime)      jhl.addFloat("jsonV2Parse",      timeSpecToFloat(lastTimeStat.jsonV2ParseTime));
+    if (lastMongoBackendTime)     jhl.addFloat("mongoBackend",     timeSpecToFloat(lastTimeStat.mongoBackendTime));
+    if (lastMongoReadWaitTime)    jhl.addFloat("mongoReadWait",    timeSpecToFloat(lastTimeStat.mongoReadWaitTime));
+    if (lastMongoWriteWaitTime)   jhl.addFloat("mongoWriteWait",   timeSpecToFloat(lastTimeStat.mongoWriteWaitTime));
+    if (lastMongoCommandWaitTime) jhl.addFloat("mongoCommandWait", timeSpecToFloat(lastTimeStat.mongoCommandWaitTime));
+    if (lastRenderTime)           jhl.addFloat("render",           timeSpecToFloat(lastTimeStat.renderTime));
+    if (lastReqTime)              jhl.addFloat("total",            timeSpecToFloat(lastTimeStat.reqTime));
 
-    jh.addRaw("last", lastJh.str());
+    jh.addRaw("last", jhl.str());
   }
 
   timeStatSemGive(__FUNCTION__, "putting stats together");

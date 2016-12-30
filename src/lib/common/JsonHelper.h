@@ -1,5 +1,5 @@
-#ifndef SRC_LIB_COMMON_JSONHELPER_H
-#define SRC_LIB_COMMON_JSONHELPER_H
+#ifndef SRC_LIB_COMMON_JSONHELPER_H_
+#define SRC_LIB_COMMON_JSONHELPER_H_
 
 /*
 *
@@ -25,29 +25,35 @@
 *
 * Author: Orion dev team
 */
+#include <inttypes.h>
 
 #include <sstream>
 #include <string>
 #include <vector>
 #include <map>
 
+
+
+/* ****************************************************************************
+*
+* JsonHelper - 
+*/
 class JsonHelper
 {
-public:
+ public:
   JsonHelper();
 
-  void        addString(const std::string& key, const std::string& value);
-  void        addRaw(const std::string& key, const std::string& value);
-  void        addNumber(const std::string& key, long long value);
-  void        addFloat(const std::string& key, float value);
-  void        addDate(const std::string& key, long long timestamp);
-  std::string str();
+  void         addString(const std::string& key, const std::string& value);
+  void         addRaw(const std::string& key,    const std::string& value);
+  void         addNumber(const std::string& key, int64_t value);
+  void         addFloat(const std::string& key,  float value);
+  void         addDate(const std::string& key,   int64_t timestamp);
+  std::string  str();
 
-private:
- std::ostringstream ss;
- bool               empty;
+ private:
+  std::ostringstream ss;
+  bool               empty;
 };
-
 
 
 
@@ -55,7 +61,7 @@ private:
 *
 * toJsonString -
 */
-std::string toJsonString(const std::string& input);
+extern std::string toJsonString(const std::string& input);
 
 
 
@@ -64,7 +70,7 @@ std::string toJsonString(const std::string& input);
 * vectorToJson -
 */
 template <class T>
-std::string vectorToJson(std::vector<T> &list)
+std::string vectorToJson(std::vector<T>& list)
 {
   typedef typename std::vector<T>::size_type size_type;
 
@@ -81,9 +87,16 @@ std::string vectorToJson(std::vector<T> &list)
     ss << ',' << list[i].toJson();
   }
   ss << ']';
+
   return ss.str();
 }
 
+
+
+/* ****************************************************************************
+*
+* vectorToJson -
+*/
 template <>
 std::string vectorToJson(std::vector<std::string> &list);
 
@@ -93,6 +106,6 @@ std::string vectorToJson(std::vector<std::string> &list);
 *
 * objectToJson -
 */
-extern std::string objectToJson(std::map<std::string, std::string>& list);
+extern std::string objectToJson(const std::map<std::string, std::string>& list);
 
-#endif // SRC_LIB_COMMON_JSONHELPER_H
+#endif  // SRC_LIB_COMMON_JSONHELPER_H_

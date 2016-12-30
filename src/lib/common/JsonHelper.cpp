@@ -22,15 +22,20 @@
 *
 * Author: Orion dev team
 */
+#include <inttypes.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#include <string>
+#include <vector>
+#include <map>
+#include <iomanip>
 
 #include "common/JsonHelper.h"
 #include "common/string.h"
 #include "common/limits.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <iomanip>
 
 
 /* ****************************************************************************
@@ -46,9 +51,9 @@ std::string toJsonString(const std::string& input)
   {
     /* FIXME P3: This function ensures that if the DB holds special characters (which are
      * not supported in JSON according to its specification), they are converted to their escaped
-     * representations. The process wouldn't be necessary if the DB couldn't hold such special characters, 
-     * but as long as we support NGSIv1, it is better to have the check (e.g. a newline could be 
-     * used in an attribute value using XML). Even removing NGSIv1, we have to ensure that the 
+     * representations. The process wouldn't be necessary if the DB couldn't hold such special characters,
+     * but as long as we support NGSIv1, it is better to have the check (e.g. a newline could be
+     * used in an attribute value using XML). Even removing NGSIv1, we have to ensure that the
      * input parser (rapidjson) doesn't inject not supported JSON characters in the DB (this needs to be
      * investigated in the rapidjson documentation)
      *
@@ -63,18 +68,21 @@ std::string toJsonString(const std::string& input)
     switch (char ch = *iter)
     {
     case '\\': ss << "\\\\"; break;
-    case '"': ss << "\\\""; break;    
-    case '\b': ss << "\\b"; break;
-    case '\f': ss << "\\f"; break;
-    case '\n': ss << "\\n"; break;
-    case '\r': ss << "\\r"; break;
-    case '\t': ss << "\\t"; break;
+    case '"':  ss << "\\\""; break;
+    case '\b': ss << "\\b";  break;
+    case '\f': ss << "\\f";  break;
+    case '\n': ss << "\\n";  break;
+    case '\r': ss << "\\r";  break;
+    case '\t': ss << "\\t";  break;
     default:
       /* Converting the rest of special chars 0-31 to \u00xx. Note that 0x80 - 0xFF are untouched as they
        * correspond to UTF-8 multi-byte characters */
       if (ch >= 0 && ch <= 0x1F)
       {
-        static const char intToHex[16] =  { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' } ;
+        static const char intToHex[16] =
+          {
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+          };
 
         ss << "\\u00" << intToHex[(ch & 0xF0) >> 4] << intToHex[ch & 0x0F];
       }
@@ -83,10 +91,11 @@ std::string toJsonString(const std::string& input)
         ss << ch;
       }
       break;
-    } //end-switch
+    }
+  }
 
-  } //end-for
   ss << '"';
+
   return ss.str();
 }
 
@@ -121,11 +130,12 @@ std::string vectorToJson(std::vector<std::string> &list)
 }
 
 
+
 /* ****************************************************************************
 *
 * objectToJson -
 */
-std::string objectToJson(std::map<std::string, std::string>& list)
+std::string objectToJson(const std::map<std::string, std::string>& list)
 {
   std::ostringstream  os;
   bool                firstTime = true;
@@ -200,11 +210,12 @@ void JsonHelper::addRaw(const std::string& key, const std::string& value)
 }
 
 
+
 /* ****************************************************************************
 *
 * JsonHelper::addNumber -
 */
-void JsonHelper::addNumber(const std::string& key, long long value)
+void JsonHelper::addNumber(const std::string& key, int64_t value)
 {
   if (!empty)
   {
@@ -215,19 +226,21 @@ void JsonHelper::addNumber(const std::string& key, long long value)
   empty = false;
 }
 
+
+
 /* ****************************************************************************
 *
 * JsonHelper::addFloat -
 */
 void JsonHelper::addFloat(const std::string& key, float  value)
-{  
+{
   unsigned int oldPrecision = ss.precision();
   ss << std::fixed << std::setprecision(decimalDigits(value));
 
   if (!empty)
   {
     ss << ',';
-  }  
+  }
   ss << toJsonString(key) << ':' << value;
 
   // Reset stream to old parameters (whichever they are...)
@@ -237,11 +250,13 @@ void JsonHelper::addFloat(const std::string& key, float  value)
   empty = false;
 }
 
+
+
 /* ****************************************************************************
 *
 * JsonHelper::addDate -
 */
-void JsonHelper::addDate(const std::string& key, long long timestamp)
+void JsonHelper::addDate(const std::string& key, int64_t timestamp)
 {
   if (!empty)
   {
@@ -261,5 +276,6 @@ void JsonHelper::addDate(const std::string& key, long long timestamp)
 std::string JsonHelper::str()
 {
   ss << '}';
+
   return ss.str();
 }

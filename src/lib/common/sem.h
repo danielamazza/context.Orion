@@ -26,13 +26,11 @@
 * Author: Fermin Galan
 */
 #include <stdio.h>
-
-
-// curl context includes
-#include <string>
-
 #include <pthread.h>
 #include <curl/curl.h>
+
+#include <string>
+
 
 
 /* ****************************************************************************

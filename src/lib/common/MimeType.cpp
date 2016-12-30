@@ -41,7 +41,7 @@
 const char* mimeTypeToString(MimeType mimeType)
 {
   switch (mimeType)
-  {  
+  {
   case JSON:     return "JSON";
   case TEXT:     return "TEXT";
   case HTML:     return "HTML";

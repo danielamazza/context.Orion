@@ -33,7 +33,7 @@
 
 /* ****************************************************************************
 *
-* htmlEscape - 
+* htmlEscape -
 *
 * Allocate a new buffer to hold an escaped version of the input buffer 's'.
 * Escaping characters demands more space in the buffer, for some characters up to six
@@ -49,7 +49,7 @@ char* htmlEscape(const char* s)
   char* out     = (char*) calloc(1, newLen);
   int   sIx     = 0;
   int   outIx   = 0;
-  
+
   if (out == NULL)
   {
     LM_E(("Internal Error (allocating %d bytes: %s)", newLen, strerror(errno)));
@@ -176,7 +176,7 @@ std::string jsonInvalidCharsTransformation(const std::string& input)
     switch (char ch = *iter)
     {
     case '\\': ss << "\\\\"; break;
-    case '"':  ss << "\\\""; break;    
+    case '"':  ss << "\\\""; break;
     case '\b': ss << "\\b";  break;
     case '\f': ss << "\\f";  break;
     case '\n': ss << "\\n";  break;
@@ -188,7 +188,10 @@ std::string jsonInvalidCharsTransformation(const std::string& input)
        * correspond to UTF-8 multi-byte characters */
       if (ch >= 0 && ch <= 0x1F)
       {
-        static const char intToHex[16] =  { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' } ;
+        static const char intToHex[16] =
+          {
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+          };
 
         ss << "\\u00" << intToHex[(ch & 0xF0) >> 4] << intToHex[ch & 0x0F];
       }
@@ -198,7 +201,6 @@ std::string jsonInvalidCharsTransformation(const std::string& input)
       }
       break;
     }  // end-switch
-
   }  // end-for
 
   return ss.str();
@@ -244,7 +246,7 @@ std::string startTag
 
 /* ****************************************************************************
 *
-* endTag -  
+* endTag -
 */
 std::string endTag
 (
@@ -267,7 +269,7 @@ std::string endTag
 
 /* ****************************************************************************
 *
-* valueTag -  
+* valueTag -
 *
 * Function version for string values
 *
@@ -356,5 +358,3 @@ std::string valueTag
 
   return valueTag(indent, key, val, showComma, false, false);
 }
-
-

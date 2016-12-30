@@ -76,6 +76,6 @@ RenderFormat stringToRenderFormat(const std::string& s, bool noDefault)
   if (s == "values")       { return NGSI_V2_VALUES;        }
   if (s == "uniqueValues") { return NGSI_V2_UNIQUE_VALUES; }
   if (s == "custom")       { return NGSI_V2_CUSTOM;        }
-  
+
   return (noDefault == false)? DEFAULT_RENDER_FORMAT : NO_FORMAT;
 }
