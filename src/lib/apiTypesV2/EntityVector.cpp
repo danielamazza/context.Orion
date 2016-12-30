@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <string>
 #include <vector>
+#include <map>
 
 #include "logMsg/logMsg.h"
 #include "logMsg/traceLevels.h"
@@ -124,11 +125,12 @@ void EntityVector::push_back(Entity* item)
 */
 Entity*  EntityVector::operator[] (unsigned int ix) const
 {
-   if (ix < vec.size())
-   {
-      return vec[ix];
-   }
-   return NULL;
+  if (ix < vec.size())
+  {
+    return vec[ix];
+  }
+
+  return NULL;
 }
 
 

@@ -41,7 +41,7 @@ struct QueryContextResponse;
 */
 class Attribute
 {
-public:
+ public:
   ContextAttribute*  pcontextAttribute;
   OrionError         oe;                    // Optional - mandatory if not 200-OK
 

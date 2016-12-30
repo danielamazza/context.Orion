@@ -24,6 +24,7 @@
 */
 #include <string>
 #include <vector>
+#include <map>
 
 #include "logMsg/traceLevels.h"
 #include "logMsg/logMsg.h"
@@ -66,7 +67,7 @@ std::string Entities::render
 )
 {
   return vec.render(uriParamOptions, uriParam);
-} 
+}
 
 
 
@@ -91,9 +92,10 @@ std::string Entities::check(ApiVersion apiVersion, RequestType requestType)
 */
 void Entities::present(const std::string& indent)
 {
-  LM_T(LmtPresent, ("%s%d Entities:", 
-		    indent.c_str(), 
-		    vec.size()));
+  LM_T(LmtPresent, ("%s%d Entities:",
+                    indent.c_str(),
+                    vec.size()));
+
   vec.present(indent + "  ");
 }
 

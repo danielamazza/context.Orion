@@ -1,5 +1,5 @@
-#ifndef SRC_LIB_APITYPESV2_SUBSCRIPTION_H
-#define SRC_LIB_APITYPESV2_SUBSCRIPTION_H
+#ifndef SRC_LIB_APITYPESV2_SUBSCRIPTION_H_
+#define SRC_LIB_APITYPESV2_SUBSCRIPTION_H_
 
 /*
 *
@@ -35,9 +35,14 @@
 #include "ngsi/Restriction.h"
 #include "common/RenderFormat.h"
 
+
+
 namespace ngsiv2
 {
-
+/* ****************************************************************************
+*
+* EntID - 
+*/
 struct EntID
 {
   std::string id;
@@ -54,30 +59,51 @@ struct EntID
     typePattern(typePatternA)
   {}
 
-  EntID()
-  {}
-
+  EntID()  {}
 };
 
+
+
+/* ****************************************************************************
+*
+* operator== - 
+*/
 inline bool operator==(const EntID& lhs, const EntID& rhs)
 {
-  return (lhs.id   == rhs.id)   && (lhs.idPattern   == rhs.idPattern)
-      && (lhs.type == rhs.type) && (lhs.typePattern == rhs.typePattern);
+  return (lhs.id          == rhs.id)          &&
+         (lhs.idPattern   == rhs.idPattern)   &&
+         (lhs.type        == rhs.type)        &&
+         (lhs.typePattern == rhs.typePattern);
 }
 
-inline bool operator!=(const EntID& lhs, const EntID& rhs){ return !(lhs == rhs); }
 
+
+/* ****************************************************************************
+*
+* operator!= - 
+*/
+inline bool operator!=(const EntID& lhs, const EntID& rhs)
+{
+  return !(lhs == rhs);
+}
+
+
+
+/* ****************************************************************************
+*
+* Notification - 
+*/
 struct Notification
 {
-  std::vector<std::string> attributes;
-  std::vector<std::string> metadata;
-  bool                     blacklist;
-  long long                timesSent;
-  long long                lastNotification;
-  HttpInfo                 httpInfo;
-  std::string              toJson(const std::string& attrsFormat);
-  int                      lastFailure;
-  int                      lastSuccess;
+  std::vector<std::string>  attributes;
+  std::vector<std::string>  metadata;
+  bool                      blacklist;
+  int64_t                   timesSent;
+  int64_t                   lastNotification;
+  HttpInfo                  httpInfo;
+  std::string               toJson(const std::string& attrsFormat);
+  int                       lastFailure;
+  int                       lastSuccess;
   Notification():
     attributes(),
     blacklist(false),
@@ -91,15 +117,23 @@ struct Notification
 
 
 
+/* ****************************************************************************
+*
+* Condition - 
+*/
 struct Condition
 {
-  std::vector<std::string> attributes;
-  SubscriptionExpression   expression;
-  std::string toJson();
+  std::vector<std::string>  attributes;
+  SubscriptionExpression    expression;
+  std::string               toJson();
 };
 
 
 
+/* ****************************************************************************
+*
+* Subject - 
+*/
 struct Subject
 {
   std::vector<EntID> entities;
@@ -108,25 +142,27 @@ struct Subject
 };
 
 
+
+/* ****************************************************************************
+*
+* Subscription - 
+*/
 struct Subscription
 {
-  std::string  id;
-  std::string  description;
-  bool         descriptionProvided;
-  Subject      subject;
-  long long    expires;
-  std::string  status;
-  Notification notification;
-  long long    throttling;
-  RenderFormat attrsFormat;
-  Restriction  restriction;
-  std::string  toJson();
+  std::string   id;
+  std::string   description;
+  bool          descriptionProvided;
+  Subject       subject;
+  int64_t       expires;
+  std::string   status;
+  Notification  notification;
+  int64_t       throttling;
+  RenderFormat  attrsFormat;
+  Restriction   restriction;
+  std::string   toJson();
 
   ~Subscription();
 };
+}  // end namespace
 
-
-
-} // end namespace
-
-#endif // SRC_LIB_APITYPESV2_SUBSCRIPTION_H
+#endif  // SRC_LIB_APITYPESV2_SUBSCRIPTION_H_

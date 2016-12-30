@@ -27,11 +27,14 @@
 */
 #include <string>
 #include <vector>
+#include <map>
 
 #include "ngsi/ContextAttributeVector.h"
 #include "rest/OrionError.h"
 
 struct QueryContextResponse;
+
+
 
 /* ****************************************************************************
 *
@@ -39,7 +42,7 @@ struct QueryContextResponse;
 */
 class Entity
 {
-public:
+ public:
   std::string             id;               // Mandatory
   std::string             type;             // Optional
   std::string             isPattern;        // Optional

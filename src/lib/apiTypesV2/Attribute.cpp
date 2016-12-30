@@ -60,7 +60,12 @@ std::string Attribute::render
 
     if (requestType == EntityAttributeValueRequest)
     {
-      out = pcontextAttribute->toJsonAsValue(apiVersion, acceptedTextPlain, acceptedJson, outFormatSelection, outMimeTypeP, scP);
+      out = pcontextAttribute->toJsonAsValue(apiVersion,
+                                             acceptedTextPlain,
+                                             acceptedJson,
+                                             outFormatSelection,
+                                             outMimeTypeP,
+                                             scP);
     }
     else
     {
@@ -72,7 +77,8 @@ std::string Attribute::render
       }
 
       out = "{";
-      out += pcontextAttribute->toJson(true, renderFormat, metadataFilter, requestType);  // param 1 'true' as it is the last and only element
+      // param 1 'true' as it is the last and only element
+      out += pcontextAttribute->toJson(true, renderFormat, metadataFilter, requestType);
       out += "}";
     }
 
@@ -112,7 +118,7 @@ void Attribute::fill(QueryContextResponse* qcrsP, std::string attrName)
     //
     oe.fill(qcrsP->errorCode.code, qcrsP->errorCode.details, qcrsP->errorCode.reasonPhrase);
   }
-  else if (qcrsP->contextElementResponseVector.size() > 1) // qcrsP->errorCode.code == SccOk
+  else if (qcrsP->contextElementResponseVector.size() > 1)  // qcrsP->errorCode.code == SccOk
   {
     //
     // If there are more than one entity, we return an error
@@ -122,12 +128,16 @@ void Attribute::fill(QueryContextResponse* qcrsP, std::string attrName)
   else
   {
     pcontextAttribute = NULL;
+
     // Look for the attribute by name
-    for (std::size_t i = 0; i < qcrsP->contextElementResponseVector[0]->contextElement.contextAttributeVector.size(); ++i)
+    std::size_t      ix;
+    ContextElement*  ceP = &qcrsP->contextElementResponseVector[0]->contextElement;
+
+    for (ix = 0; ix < ceP->contextAttributeVector.size(); ++ix)
     {
-      if (qcrsP->contextElementResponseVector[0]->contextElement.contextAttributeVector[i]->name == attrName)
+      if (ceP->contextAttributeVector[ix]->name == attrName)
       {
-        pcontextAttribute = qcrsP->contextElementResponseVector[0]->contextElement.contextAttributeVector[i];
+        pcontextAttribute = ceP->contextAttributeVector[ix];
         break;
       }
     }

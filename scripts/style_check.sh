@@ -181,6 +181,7 @@ fi
 
 #
 # lint error categories
+# FIXME P4: sev[21] set to MINOR. Understand the severity of 'Single-argument constructors should be marked explicit'
 #
 declare -A cat
 
@@ -205,7 +206,7 @@ sev[17]=MAYOR; cat[17]='Add #include'
 sev[18]=MAYOR; cat[18]='Blank line at the start of a code block'
 sev[19]=MINOR; cat[19]='More than one command on the same line'
 sev[20]=MAYOR; cat[20]="You don't need a ; after a }"
-sev[21]=MAYOR; cat[21]='Single-argument constructors should be marked explicit'
+sev[21]=MINOR; cat[21]='Single-argument constructors should be marked explicit'
 sev[22]=MAYOR; cat[22]='Streams are highly discouraged'
 sev[23]=MAYOR; cat[23]='THIS LINE IS UNUSED'
 sev[24]=MAYOR; cat[24]='Else clause should never be on same line as else'

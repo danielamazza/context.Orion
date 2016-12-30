@@ -27,12 +27,16 @@
 */
 #include <string>
 #include <vector>
+#include <map>
 
 #include "apiTypesV2/EntityVector.h"
 #include "rest/OrionError.h"
 
 
+
 struct QueryContextResponse;
+
+
 
 /* ****************************************************************************
 *
@@ -40,7 +44,7 @@ struct QueryContextResponse;
 */
 class Entities
 {
-public:
+ public:
   EntityVector  vec;          // Optional - mandatory if 200-OK
   OrionError    oe;           // Optional - mandatory if not 200-OK
 

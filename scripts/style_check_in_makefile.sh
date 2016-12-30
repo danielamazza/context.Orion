@@ -50,6 +50,7 @@ style_check src/lib/parseArgs
 style_check src/lib/cache
 style_check src/lib/alarmMgr
 style_check src/lib/metricsMgr
+style_check src/lib/apiTypesV2
 # FIXME: Just keep adding directories here until all of them are included:
 
 #

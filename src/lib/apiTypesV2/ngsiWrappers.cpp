@@ -24,9 +24,12 @@
 */
 
 /* The aim of this module is to hold a set of wrapper functions needed
- * for transforming NGSIv1 into NGSIv2 types and viceversa. We need this
- * while both versions of the API coexist. However, at the end, this module
- * should be removed */
+* for transforming NGSIv1 into NGSIv2 types and viceversa. We need this
+* while both versions of the API coexist. However, at the end, this module
+* should be removed
+*/
+#include <string>
+#include <vector>
 
 #include "apiTypesV2/ngsiWrappers.h"
 #include "apiTypesV2/Subscription.h"
@@ -34,8 +37,6 @@
 #include "ngsi/AttributeList.h"
 #include "ngsi/NotifyConditionVector.h"
 #include "ngsi/NotifyCondition.h"
-
-using namespace ngsiv2;
 
 
 
@@ -63,7 +64,7 @@ void attrsStdVector2NotifyConditionVector(const std::vector<std::string>& attrs,
 * entIdStdVector2EntityIdVector -
 *
 */
-void entIdStdVector2EntityIdVector(const std::vector<EntID>& entitiesV, EntityIdVector* enVP)
+void entIdStdVector2EntityIdVector(const std::vector<ngsiv2::EntID>& entitiesV, EntityIdVector* enVP)
 {
   for (unsigned int ix = 0; ix < entitiesV.size(); ix++)
   {
@@ -72,7 +73,7 @@ void entIdStdVector2EntityIdVector(const std::vector<EntID>& entitiesV, EntityId
     {
       enP->fill(entitiesV[ix].id, entitiesV[ix].type, "false");
     }
-    else // idPattern
+    else  // idPattern
     {
       enP->fill(entitiesV[ix].idPattern, entitiesV[ix].type, "true");
     }

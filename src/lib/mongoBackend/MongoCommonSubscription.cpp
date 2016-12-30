@@ -22,7 +22,6 @@
 * Author: Fermín Galán
 *
 */
-
 #include "mongoBackend/MongoCommonSubscription.h"
 
 #include "logMsg/logMsg.h"
@@ -39,7 +38,6 @@ using namespace mongo;
 /* ****************************************************************************
 *
 * setNewSubscriptionId -
-*
 */
 std::string setNewSubscriptionId(BSONObjBuilder* b)
 {
@@ -56,11 +54,10 @@ std::string setNewSubscriptionId(BSONObjBuilder* b)
 /* ****************************************************************************
 *
 * setExpiration -
-*
 */
 void setExpiration(const Subscription& sub, BSONObjBuilder* b)
 {
-  b->append(CSUB_EXPIRATION, sub.expires);
+  b->append(CSUB_EXPIRATION, (long long) sub.expires);
   LM_T(LmtMongo, ("Subscription expiration: %lu", sub.expires));
 }
 
@@ -69,7 +66,6 @@ void setExpiration(const Subscription& sub, BSONObjBuilder* b)
 /* ****************************************************************************
 *
 * setCustomHttpInfo -
-*
 */
 static void setCustomHttpInfo(const HttpInfo& httpInfo, BSONObjBuilder* b)
 {
@@ -118,7 +114,6 @@ static void setCustomHttpInfo(const HttpInfo& httpInfo, BSONObjBuilder* b)
 /* ****************************************************************************
 *
 * setHttpInfo -
-*
 */
 void setHttpInfo(const Subscription& sub, BSONObjBuilder* b)
 {
@@ -139,11 +134,10 @@ void setHttpInfo(const Subscription& sub, BSONObjBuilder* b)
 /* ****************************************************************************
 *
 * setThrottling -
-*
 */
 void setThrottling(const Subscription& sub, BSONObjBuilder* b)
 {
-  b->append(CSUB_THROTTLING, sub.throttling);
+  b->append(CSUB_THROTTLING, (long long int) sub.throttling);
   LM_T(LmtMongo, ("Subscription throttling: %lu", sub.throttling));
 }
 
@@ -152,7 +146,6 @@ void setThrottling(const Subscription& sub, BSONObjBuilder* b)
 /* ****************************************************************************
 *
 * setServicePath -
-*
 */
 void setServicePath(const std::string servicePath, BSONObjBuilder* b)
 {
@@ -165,7 +158,6 @@ void setServicePath(const std::string servicePath, BSONObjBuilder* b)
 /* ****************************************************************************
 *
 * setDescription -
-*
 */
 void setDescription(const Subscription& sub, BSONObjBuilder* b)
 {
@@ -181,7 +173,6 @@ void setDescription(const Subscription& sub, BSONObjBuilder* b)
 /* ****************************************************************************
 *
 * setStatus -
-*
 */
 void setStatus(const Subscription& sub, BSONObjBuilder* b)
 {
@@ -195,7 +186,6 @@ void setStatus(const Subscription& sub, BSONObjBuilder* b)
 /* ****************************************************************************
 *
 * setEntities -
-*
 */
 void setEntities(const Subscription& sub, BSONObjBuilder* b)
 {
@@ -254,7 +244,6 @@ void setEntities(const Subscription& sub, BSONObjBuilder* b)
 /* ****************************************************************************
 *
 * setAttrs -
-*
 */
 void setAttrs(const Subscription& sub, BSONObjBuilder* b)
 {
@@ -273,7 +262,6 @@ void setAttrs(const Subscription& sub, BSONObjBuilder* b)
 /* ****************************************************************************
 *
 * setCondsAndInitialNotify -
-*
 */
 void setCondsAndInitialNotify
 (
@@ -326,7 +314,6 @@ void setCondsAndInitialNotify
 /* ****************************************************************************
 *
 * setLastNotification -
-*
 */
 void setLastNotification(long long lastNotification, BSONObjBuilder* b)
 {
@@ -375,7 +362,6 @@ void setLastSuccess(long long lastSuccess, BSONObjBuilder* b)
 /* ****************************************************************************
 *
 * setExpression -
-*
 */
 void setExpression(const Subscription& sub, BSONObjBuilder* b)
 {
@@ -394,7 +380,6 @@ void setExpression(const Subscription& sub, BSONObjBuilder* b)
 /* ****************************************************************************
 *
 * setFormat -
-*
 */
 void setFormat(const Subscription& sub, BSONObjBuilder* b)
 {
@@ -408,7 +393,6 @@ void setFormat(const Subscription& sub, BSONObjBuilder* b)
 /* ****************************************************************************
 *
 * setBlacklist -
-*
 */
 void setBlacklist(const Subscription& sub, BSONObjBuilder* b)
 {
@@ -422,7 +406,6 @@ void setBlacklist(const Subscription& sub, BSONObjBuilder* b)
 /* ****************************************************************************
 *
 * setMetadata -
-*
 */
 void setMetadata(const Subscription& sub, BSONObjBuilder* b)
 {

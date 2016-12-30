@@ -43,18 +43,18 @@ namespace ngsiv2
     bool  fromNgsiv1;          // to support a special case when the SubscriptionUpdate comes from NGSIv1
 
     SubscriptionUpdate():
-      subjectProvided      (false),
-      expiresProvided      (false),
-      statusProvided       (false),
-      notificationProvided (false),
-      attrsFormatProvided  (false),
-      throttlingProvided   (false),
-      blacklistProvided    (false),
-      fromNgsiv1           (false)
+      subjectProvided(false),
+      expiresProvided(false),
+      statusProvided(false),
+      notificationProvided(false),
+      attrsFormatProvided(false),
+      throttlingProvided(false),
+      blacklistProvided(false),
+      fromNgsiv1(false)
       {
         descriptionProvided = false;
       }
   };
 }
 
-#endif // SRC_LIB_APITYPESV2_SUBSCRIPTIONUPDATE_H_
+#endif  // SRC_LIB_APITYPESV2_SUBSCRIPTIONUPDATE_H_

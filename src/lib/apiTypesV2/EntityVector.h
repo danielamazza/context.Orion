@@ -1,5 +1,5 @@
-#ifndef SRC_LIB_NGSI_ENTITYVECTOR_H_
-#define SRC_LIB_NGSI_ENTITYVECTOR_H_
+#ifndef SRC_LIB_APITYPESV2_ENTITYVECTOR_H_
+#define SRC_LIB_APITYPESV2_ENTITYVECTOR_H_
 
 /*
 *
@@ -27,6 +27,7 @@
 */
 #include <string>
 #include <vector>
+#include <map>
 
 #include "apiTypesV2/Entity.h"
 
@@ -49,7 +50,6 @@ typedef struct EntityVector
   Entity*       lookup(const std::string& name, const std::string& type, const std::string& isPattern);
   void          release();
   Entity*  operator[](unsigned int ix) const;
-  
 } EntityVector;
 
-#endif  // SRC_LIB_NGSI_ENTITYVECTOR_H_
+#endif  // SRC_LIB_APITYPESV2_ENTITYVECTOR_H_

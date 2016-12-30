@@ -40,7 +40,7 @@
 */
 class BatchUpdate
 {
-public:
+ public:
   UpdateActionType  updateActionType;   // Mandatory
   Entities          entities;           // Mandatory
 

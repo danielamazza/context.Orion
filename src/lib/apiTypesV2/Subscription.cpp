@@ -37,7 +37,6 @@
 
 namespace ngsiv2
 {
-
   /* ****************************************************************************
   *
   * Subscription::~Subscription -
@@ -231,5 +230,4 @@ namespace ngsiv2
 
     return jh.str();
   }
-
-} // end namespace
+}  // end namespace

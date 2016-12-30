@@ -33,12 +33,10 @@
 #include "mongoBackend/safeMongo.h"
 #include "apiTypesV2/HttpInfo.h"
 
-using namespace mongo;
 
 
 namespace ngsiv2
 {
-
 /* ****************************************************************************
 *
 * HttpInfo::HttpInfo - 
@@ -101,7 +99,7 @@ std::string HttpInfo::toJson()
 *
 * HttpInfo::fill -
 */
-void HttpInfo::fill(const BSONObj& bo)
+void HttpInfo::fill(const mongo::BSONObj& bo)
 {
   this->url    = bo.hasField(CSUB_REFERENCE)? getStringFieldF(bo, CSUB_REFERENCE) : "";
   this->custom = bo.hasField(CSUB_CUSTOM)?    getBoolFieldF(bo,   CSUB_CUSTOM)    : false;
@@ -118,11 +116,11 @@ void HttpInfo::fill(const BSONObj& bo)
     // qs
     if (bo.hasField(CSUB_QS))
     {
-      BSONObj qs = getObjectFieldF(bo, CSUB_QS);
+      mongo::BSONObj qs = getObjectFieldF(bo, CSUB_QS);
 
-      for (BSONObj::iterator i = qs.begin(); i.more();)
+      for (mongo::BSONObj::iterator i = qs.begin(); i.more();)
       {
-        BSONElement e = i.next();
+        mongo::BSONElement e = i.next();
 
         this->qs[e.fieldName()] = e.String();
       }
@@ -131,16 +129,15 @@ void HttpInfo::fill(const BSONObj& bo)
     // headers
     if (bo.hasField(CSUB_HEADERS))
     {
-      BSONObj headers = getObjectFieldF(bo, CSUB_HEADERS);
+      mongo::BSONObj headers = getObjectFieldF(bo, CSUB_HEADERS);
 
-      for (BSONObj::iterator i = headers.begin(); i.more();)
+      for (mongo::BSONObj::iterator i = headers.begin(); i.more();)
       {
-        BSONElement e = i.next();
+        mongo::BSONElement e = i.next();
 
         this->headers[e.fieldName()] = e.String();
       }
     }
   }
 }
-
 }

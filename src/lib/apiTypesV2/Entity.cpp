@@ -24,6 +24,7 @@
 */
 #include <string>
 #include <vector>
+#include <map>
 
 #include "logMsg/traceLevels.h"
 #include "logMsg/logMsg.h"
@@ -45,7 +46,6 @@
 */
 Entity::Entity(): typeGiven(false), renderId(true), creDate(0), modDate(0)
 {
-
 }
 
 
@@ -58,6 +58,7 @@ Entity::~Entity()
 {
   release();
 }
+
 
 
 /* ****************************************************************************
@@ -103,12 +104,17 @@ std::string Entity::render
   }
 
   // Add special attributes representing entity dates
-  if ((creDate != 0) && (uriParamOptions[DATE_CREATED] || (std::find(attrsFilter.begin(), attrsFilter.end(), DATE_CREATED) != attrsFilter.end())))
+  if ((creDate != 0) &&
+      (uriParamOptions[DATE_CREATED] ||
+       (std::find(attrsFilter.begin(), attrsFilter.end(), DATE_CREATED) != attrsFilter.end())))
   {
     ContextAttribute* caP = new ContextAttribute(DATE_CREATED, DATE_TYPE, creDate);
     attributeVector.push_back(caP);
   }
-  if ((modDate != 0) && (uriParamOptions[DATE_MODIFIED] || (std::find(attrsFilter.begin(), attrsFilter.end(), DATE_MODIFIED) != attrsFilter.end())))
+
+  if ((modDate != 0) &&
+      (uriParamOptions[DATE_MODIFIED] ||
+       (std::find(attrsFilter.begin(), attrsFilter.end(), DATE_MODIFIED) != attrsFilter.end())))
   {
     ContextAttribute* caP = new ContextAttribute(DATE_MODIFIED, DATE_TYPE, modDate);
     attributeVector.push_back(caP);
@@ -117,10 +123,12 @@ std::string Entity::render
   if ((renderFormat == NGSI_V2_VALUES) || (renderFormat == NGSI_V2_UNIQUE_VALUES))
   {
     out = "[";
+
     if (attributeVector.size() != 0)
     {
       out += attributeVector.toJson(renderFormat, attrsFilter, metadataFilter, false);
     }
+
     out += "]";
   }
   else
@@ -177,8 +185,8 @@ std::string Entity::render
 */
 std::string Entity::check(ApiVersion apiVersion, RequestType requestType)
 {
-  ssize_t len;
-  char errorMsg[128];
+  ssize_t  len;
+  char     errorMsg[128];
 
   if (((apiVersion == V2) && (len = strlen(id.c_str())) < MIN_ID_LEN) && (requestType != EntityRequest))
   {
@@ -214,7 +222,6 @@ std::string Entity::check(ApiVersion apiVersion, RequestType requestType)
 
 
   if (!((requestType == BatchQueryRequest) || (requestType == BatchUpdateRequest && !typeGiven)))
-
   {
     if ((apiVersion == V2) && ((len = strlen(type.c_str())) < MIN_ID_LEN))
     {
@@ -247,15 +254,9 @@ std::string Entity::check(ApiVersion apiVersion, RequestType requestType)
 */
 void Entity::present(const std::string& indent)
 {
-  LM_T(LmtPresent, ("%sid:        %s", 
-		    indent.c_str(), 
-		    id.c_str()));
-  LM_T(LmtPresent, ("%stype:      %s", 
-		    indent.c_str(), 
-		    type.c_str()));
-  LM_T(LmtPresent, ("%sisPattern: %s", 
-		    indent.c_str(), 
-		    isPattern.c_str()));
+  LM_T(LmtPresent, ("%sid:        %s", indent.c_str(), id.c_str()));
+  LM_T(LmtPresent, ("%stype:      %s", indent.c_str(), type.c_str()));
+  LM_T(LmtPresent, ("%sisPattern: %s", indent.c_str(), isPattern.c_str()));
 
   attributeVector.present(indent + "  ");
 }
@@ -286,9 +287,14 @@ void Entity::fill
   attributeVector.fill(aVec);
 }
 
+
+
+/* ****************************************************************************
+*
+* Entity::fill -
+*/
 void Entity::fill(QueryContextResponse* qcrsP)
 {
-
   if (qcrsP->errorCode.code == SccContextElementNotFound)
   {
     oe.fill(SccContextElementNotFound, ERROR_DESC_NOT_FOUND_ENTITY, ERROR_NOT_FOUND);
@@ -300,12 +306,12 @@ void Entity::fill(QueryContextResponse* qcrsP)
     //
     oe.fill(qcrsP->errorCode.code, qcrsP->errorCode.details, qcrsP->errorCode.reasonPhrase);
   }
-  else if (qcrsP->contextElementResponseVector.size() > 1) // qcrsP->errorCode.code == SccOk
+  else if (qcrsP->contextElementResponseVector.size() > 1)  // qcrsP->errorCode.code == SccOk
   {
-      //
-      // If there are more than one entity, we return an error
-      //
-      oe.fill(SccConflict, ERROR_DESC_TOO_MANY_ENTITIES, ERROR_TOO_MANY);
+    //
+    // If there are more than one entity, we return an error
+    //
+    oe.fill(SccConflict, ERROR_DESC_TOO_MANY_ENTITIES, ERROR_TOO_MANY);
   }
   else
   {
@@ -315,18 +321,22 @@ void Entity::fill(QueryContextResponse* qcrsP)
   }
 }
 
+
+
 /* ****************************************************************************
 *
-* Entity::release - 
+* Entity::release -
 */
 void Entity::release(void)
 {
   attributeVector.release();
 }
 
+
+
 /* ****************************************************************************
 *
-* Entity::hideIdAndType
+* Entity::hideIdAndType -
 *
 *  Changes the attribute controlling if id and type
 *  are rendered in the JSON
