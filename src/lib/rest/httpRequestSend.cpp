@@ -177,6 +177,8 @@ static void httpHeaderAdd
 
   *headersP           = curl_slist_append(*headersP, h.c_str());
   *headerTotalSizeP  += h.size();
+
+  LM_W(("KZ: Added curl header '%s'", h.c_str()));
 }
 
 
@@ -227,6 +229,24 @@ int httpRequestSendWithCurl
    long                                       timeoutInMilliseconds
 )
 {
+  //
+  // TEMP FIX:
+  //   Early stop if port == 443 or protocol == "https" - see issue 2844
+  //
+  if (protocol == "https:")
+  {
+    LM_W(("KZ: protocol is https - no notification is sent"));
+    return 0;
+  }
+  if (port == 443)
+  {
+    LM_W(("KZ: port is 443 - no notification is sent"));
+    return 0;
+  }
+
+  LM_W(("KZ: protocol is '%s'", protocol.c_str()));
+  LM_W(("KZ: port is %d", port));
+
   char                            portAsString[STRING_SIZE_FOR_INT];
   static unsigned long long       callNo             = 0;
   std::string                     result;
@@ -366,6 +386,7 @@ int httpRequestSendWithCurl
   char headerUserAgent[HTTP_HEADER_USER_AGENT_MAX_LENGTH];
 
   snprintf(headerUserAgent, sizeof(headerUserAgent), "User-Agent: orion/%s libcurl/%s", versionGet(), curlVersionGet(cvBuf, sizeof(cvBuf)));
+  LM_W(("KZ: libcurl version: %s", cvBuf));
   LM_T(LmtHttpHeaders, ("HTTP-HEADERS: '%s'", headerUserAgent));
   httpHeaderAdd(&headers, "User-Agent", headerUserAgent, &outgoingMsgSize, extraHeaders, usedExtraHeaders);
 
@@ -448,6 +469,7 @@ int httpRequestSendWithCurl
       
       headers = curl_slist_append(headers, header.c_str());
       outgoingMsgSize += header.size();
+      LM_W(("KZ: Added curl extra header '%s'", header.c_str()));
     }  
   }
 
@@ -470,6 +492,7 @@ int httpRequestSendWithCurl
   // Contents
   const char* payload = content.c_str();
   curl_easy_setopt(curl, CURLOPT_POSTFIELDS, (u_int8_t*) payload);
+  LM_W(("KZ: Added curl payload"));
 
   // Set up URL
   std::string url;
@@ -480,12 +503,19 @@ int httpRequestSendWithCurl
   url = url + ":" + portAsString + (resource.at(0) == '/'? "" : "/") + resource;
 
   // Prepare CURL handle with obtained options
+  LM_W(("KZ: Setting CURLOPT_URL: '%s' (not used protocol parameter == '%s')", url.c_str(), protocol.c_str()));
   curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+  LM_W(("KZ: Setting CURLOPT_CUSTOMREQUEST: '%s'", verb.c_str()));
   curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, verb.c_str()); // Set HTTP verb
+  LM_W(("KZ: Setting CURLOPT_FOLLOWLOCATION: 1"));
   curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L); // Allow redirection (?)
+  LM_W(("KZ: Setting CURLOPT_HEADER: 1"));
   curl_easy_setopt(curl, CURLOPT_HEADER, 1); // Activate include the header in the body output
+  LM_W(("KZ: Setting CURLOPT_HTTPHEADER: (list of headers)"));
   curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers); // Put headers in place
-  curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &writeMemoryCallback); // Send data here
+  LM_W(("KZ: Setting CURLOPT_WRITEFUNCTION: writeMemoryCallback (%p)", writeMemoryCallback));
+  curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeMemoryCallback); // Send data here
+  LM_W(("KZ: Setting CURLOPT_WRITEDATA: httpResponse (%p)", httpResponse));
   curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*) httpResponse); // Custom data for response handling
 
   //
@@ -494,6 +524,7 @@ int httpRequestSendWithCurl
   // (there are some reports about the bug is no longer in libcurl 7.32), using CURLOPT_NOSIGNAL could be not necessary and this be removed).
   // See issue #1016 for more details.
   //
+  LM_W(("KZ: Setting CURLOPT_NOSIGNAL: 1 (to avoid some known problem in libcurl)"));
   curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);
 
   //
@@ -504,6 +535,7 @@ int httpRequestSendWithCurl
   //
   if (timeoutInMilliseconds != 0) 
   {
+    LM_W(("KZ: Setting CURLOPT_TIMEOUT_MS: %d", timeoutInMilliseconds));
     curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, timeoutInMilliseconds);
   }
 
@@ -511,8 +543,10 @@ int httpRequestSendWithCurl
   // Synchronous HTTP request
   // This was previously a LM_T trace, but we have "promoted" it to INFO due to it is needed to check logs in a .test case (case 000 notification_different_sizes.test)
   LM_I(("Sending message %lu to HTTP server: sending message of %d bytes to HTTP server", callNo, outgoingMsgSize));
+  LM_W(("KZ: calling curl_easy_perform"));
   res = curl_easy_perform(curl);
-
+  LM_W(("KZ: curl_easy_perform returned %d", res));
+  LM_W(("KZ: ---------------------------------------------------------------------"));
   if (res != CURLE_OK)
   {
     //

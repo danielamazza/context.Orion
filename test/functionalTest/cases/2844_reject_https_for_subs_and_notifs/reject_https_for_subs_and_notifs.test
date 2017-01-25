@@ -1,0 +1,214 @@
+# Copyright 2017 Telefonica Investigacion y Desarrollo, S.A.U
+#
+# This file is part of Orion Context Broker.
+#
+# Orion Context Broker is free software: you can redistribute it and/or
+# modify it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# Orion Context Broker is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+# General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Orion Context Broker. If not, see http://www.gnu.org/licenses/.
+#
+# For those usages not covered by this license please contact with
+# iot_support at tid dot es
+
+# VALGRIND_READY - to mark the test ready for valgrindTestSuite.sh
+
+--NAME--
+Compound values forwarded to context providers
+
+--SHELL-INIT--
+dbInit CB
+brokerStart CB
+accumulatorStart --pretty-print
+
+--SHELL--
+
+#
+# 01. Create subscription S1 with url http and port 443
+# 02. Create entity E1 to trigger notification for S1, broker should not crash!
+# 03. Create subscription S2 with url https and accumulator port (9997)
+# 04. Create entity E2 to trigger notification for S2, broker should not crash!
+# 05. Create subscription S3 with url https and port 443
+# 06. Create entity E3 to trigger notification for S3, broker should not crash!
+# 07. Dump accumulator, see nothing
+#
+
+echo "01. Create subscription S1 with url http and port 443"
+echo "====================================================="
+payload='{
+  "notification": {
+    "http": {
+      "url": "http://localhost:443/notify"
+    }
+  },
+  "subject": {
+    "entities": [
+      {
+        "id": "E1"
+      }
+    ]
+  }
+}'
+orionCurl --url /v2/subscriptions --payload "$payload"
+echo
+echo
+
+
+echo "02. Create entity E1 to trigger notification for S1, broker should not crash!"
+echo "============================================================================="
+payload='{
+  "id": "E1",
+  "A1": { "value": 2 }
+}'
+orionCurl --url /v2/entities --payload "$payload"
+echo
+echo
+
+
+echo "03. Create subscription S2 with url https and accumulator port (9997)"
+echo "====================================================================="
+payload='{
+  "notification": {
+    "http": {
+      "url": "https://localhost:'$LISTENER_PORT'/notify"
+    }
+  },
+  "subject": {
+    "entities": [
+      {
+        "id": "E2"
+      }
+    ]
+  }
+}'
+orionCurl --url /v2/subscriptions --payload "$payload"
+echo
+echo
+
+
+echo "04. Create entity E2 to trigger notification for S2, broker should not crash!"
+echo "============================================================================="
+payload='{
+  "id": "E2",
+  "A1": { "value": 4 }
+}'
+orionCurl --url /v2/entities --payload "$payload"
+echo
+echo
+
+
+echo "05. Create subscription S3 with url https and port 443"
+echo "======================================================"
+payload='{
+  "notification": {
+    "http": {
+      "url": "https://localhost:443/notify"
+    }
+  },
+  "subject": {
+    "entities": [
+      {
+        "id": "E3"
+      }
+    ]
+  }
+}'
+orionCurl --url /v2/subscriptions --payload "$payload"
+echo
+echo
+
+
+echo "06. Create entity E3 to trigger notification for S3, broker should not crash!"
+echo "============================================================================="
+payload='{
+  "id": "E3",
+  "A1": { "value": 6 }
+}'
+orionCurl --url /v2/entities --payload "$payload"
+echo
+echo
+
+
+echo "07. Dump accumulator, see nothing"
+echo "================================="
+accumulatorDump
+echo
+echo
+
+
+--REGEXPECT--
+01. Create subscription S1 with url http and port 443
+=====================================================
+HTTP/1.1 201 Created
+Content-Length: 0
+Location: /v2/subscriptions/REGEX([0-9a-f]{24})
+Fiware-Correlator: REGEX([0-9a-f\-]{36})
+Date: REGEX(.*)
+
+
+
+02. Create entity E1 to trigger notification for S1, broker should not crash!
+=============================================================================
+HTTP/1.1 201 Created
+Content-Length: 0
+Location: /v2/entities/E1?type=Thing
+Fiware-Correlator: REGEX([0-9a-f\-]{36})
+Date: REGEX(.*)
+
+
+
+03. Create subscription S2 with url https and accumulator port (9997)
+=====================================================================
+HTTP/1.1 201 Created
+Content-Length: 0
+Location: /v2/subscriptions/REGEX([0-9a-f]{24})
+Fiware-Correlator: REGEX([0-9a-f\-]{36})
+Date: REGEX(.*)
+
+
+
+04. Create entity E2 to trigger notification for S2, broker should not crash!
+=============================================================================
+HTTP/1.1 201 Created
+Content-Length: 0
+Location: /v2/entities/E2?type=Thing
+Fiware-Correlator: REGEX([0-9a-f\-]{36})
+Date: REGEX(.*)
+
+
+
+05. Create subscription S3 with url https and port 443
+======================================================
+HTTP/1.1 201 Created
+Content-Length: 0
+Location: /v2/subscriptions/REGEX([0-9a-f]{24})
+Fiware-Correlator: REGEX([0-9a-f\-]{36})
+Date: REGEX(.*)
+
+
+
+06. Create entity E3 to trigger notification for S3, broker should not crash!
+=============================================================================
+HTTP/1.1 201 Created
+Content-Length: 0
+Location: /v2/entities/E3?type=Thing
+Fiware-Correlator: REGEX([0-9a-f\-]{36})
+Date: REGEX(.*)
+
+
+
+07. Dump accumulator, see nothing
+=================================
+
+
+--TEARDOWN--
+brokerStop CB
+#dbDrop CB
+accumulatorStop

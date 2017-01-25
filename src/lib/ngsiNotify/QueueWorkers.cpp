@@ -75,6 +75,7 @@ static void* workerFunc(void* pSyncQ)
   CURL*                                curl;
 
   // Initialize curl context
+  LM_W(("KZ: calling curl_easy_init (in workerFunc)"));
   curl = curl_easy_init();
 
   if (curl == NULL)
@@ -102,7 +103,8 @@ static void* workerFunc(void* pSyncQ)
 
       strncpy(transactionId, params->transactionId, sizeof(transactionId));
 
-      LM_T(LmtNotifier, ("worker sending to: host='%s', port=%d, verb=%s, tenant='%s', service-path: '%s', xauthToken: '%s', path='%s', content-type: %s",
+      LM_T(LmtNotifier, ("worker sending to: protocol='%s', host='%s', port=%d, verb=%s, tenant='%s', service-path: '%s', xauthToken: '%s', path='%s', content-type: %s",
+                         params->protocol.c_str(),
                          params->ip.c_str(),
                          params->port,
                          params->verb.c_str(),
@@ -122,6 +124,7 @@ static void* workerFunc(void* pSyncQ)
         std::string  out;
         int          r;
 
+        LM_W(("Calling httpRequestSendWithCurl"));
         r =  httpRequestSendWithCurl(curl,
                                      params->ip,
                                      params->port,
@@ -169,6 +172,7 @@ static void* workerFunc(void* pSyncQ)
     delete paramsV;
 
     // Reset curl for next iteration
+    LM_W(("KZ: workerFunc calling curl_easy_reset (Reset curl for next iteration)"));
     curl_easy_reset(curl);
   }
 }
